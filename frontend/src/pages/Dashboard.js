@@ -95,7 +95,10 @@ import { agentsData } from "../data/agentsData"; export default function Dashboa
     whatsapp: null
   });
 
-  // Core Agent States (0: Idle, 1: Active/Syncing, 2: Completed)
+  // Track Request IDs specifically for the 52 Agent Library core systems
+  const [coreRequestIds, setCoreRequestIds] = useState({});
+
+  // Core Agent States (0: Idle, 1: Active/Syncing, 2: Waiting for Owner, 3: Completed)
   const [coreStates, setCoreStates] = useState({
     1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0
   });
@@ -147,6 +150,13 @@ import { agentsData } from "../data/agentsData"; export default function Dashboa
                 setYarnReordered(true);
                 setSystemEvents(p => [{ id: Date.now(), time: new Date().toLocaleTimeString(), msg: `WhatsApp AI: Order Approved by Owner via Terminal.`, type: 'success' }, ...p]);
               }
+              // Handle 52 Agent Library (Core Systems)
+              Object.keys(coreRequestIds).forEach(agentId => {
+                if (req._id === coreRequestIds[agentId] && coreStates[agentId] === 2) {
+                  setCoreStates(prev => ({ ...prev, [agentId]: 3 }));
+                  setSystemEvents(prev => [{ id: Date.now(), time: new Date().toLocaleTimeString(), msg: `Core AI: Request Approved. Optimization complete.`, type: 'success' }, ...prev]);
+                }
+              });
             } else if (req.status === 'Rejected') {
               if (req._id === activeRequestIds.yarn && yarnState === 2) { setYarnState(0); setLastAgentMsg(p => ({ ...p, yarn: "Owner REJECTED the bulk order." })); }
               if (req._id === activeRequestIds.truck && truckState === 2) { setTruckState(0); setLastAgentMsg(p => ({ ...p, truck: "Owner REJECTED the booking." })); }
@@ -158,6 +168,13 @@ import { agentsData } from "../data/agentsData"; export default function Dashboa
                 setOwnerReply('no'); // Force rejection UI
                 setSystemEvents(p => [{ id: Date.now(), time: new Date().toLocaleTimeString(), msg: 'WhatsApp AI: Order REJECTED by Owner via Terminal.', type: 'warning' }, ...p]);
               }
+              // Handle 52 Agent Library Rejections
+              Object.keys(coreRequestIds).forEach(agentId => {
+                if (req._id === coreRequestIds[agentId] && coreStates[agentId] === 2) {
+                  setCoreStates(prev => ({ ...prev, [agentId]: 0 }));
+                  setLastAgentMsg(p => ({ ...p, core: { ...p.core, [agentId]: "Owner REJECTED the request." } }));
+                }
+              });
             }
           });
         }
@@ -165,11 +182,13 @@ import { agentsData } from "../data/agentsData"; export default function Dashboa
         console.error("Polling error:", err);
       }
     };
-    if (yarnState === 2 || truckState === 2 || deadStockState === 2 || solarState === 2 || mahaparvState === 2 || waStep === 3 || cottonYarnState === 1 || machineHealthState === 1) {
+
+    const hasPendingCoreState = Object.values(coreStates).some(s => s === 2);
+    if (yarnState === 2 || truckState === 2 || deadStockState === 2 || solarState === 2 || mahaparvState === 2 || waStep === 3 || cottonYarnState === 1 || machineHealthState === 1 || hasPendingCoreState) {
       const interval = setInterval(pollRequests, 3000);
       return () => clearInterval(interval);
     }
-  }, [yarnState, truckState, deadStockState, solarState, mahaparvState, waStep]);
+  }, [yarnState, truckState, deadStockState, solarState, mahaparvState, waStep, cottonYarnState, machineHealthState, coreStates, activeRequestIds, coreRequestIds]);
 
   const triggerOwnerRequest = async (agentName, type, details) => {
     try {
@@ -383,11 +402,26 @@ import { agentsData } from "../data/agentsData"; export default function Dashboa
             {/* Interactive Logic for Core Systems */}
             {agent.category === 'Core Systems' && (
               <div style={{ marginTop: '12px', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                <div style={{ background: 'rgba(99, 102, 241, 0.1)', padding: '8px', borderRadius: '6px', fontSize: '0.75rem', color: '#cbd5e1', borderLeft: '2px solid var(--primary)' }}>
-                  <strong>{agent.name.split(' ')[0]}AI:</strong> {lastAgentMsg.core[agent.id]}
+                <div style={{ fontSize: '0.65rem', color: '#94a3b8', fontStyle: 'italic', marginBottom: '2px', lineHeight: '1.4' }}>
+                  {
+                    {
+                      1: "Master control node balancing 52 sub-agents to prevent system lag.",
+                      2: "Central nervous system syncing telemetry between edge looms and cloud.",
+                      3: "Calculates global permutations for optimum production schedule.",
+                      4: "Global market sync. Adjusts local outputs to real-time demands.",
+                      5: "Zero-latency processor for critical machine safety shutdowns.",
+                      6: "Translates Hindi/Mewari voice commands into machine code.",
+                      7: "Automatically resolves resource conflicts between AI sub-agents."
+                    }[agent.id]
+                  }
                 </div>
+                {lastAgentMsg.core[agent.id] && (
+                  <div style={{ background: 'rgba(99, 102, 241, 0.1)', padding: '8px', borderRadius: '6px', fontSize: '0.75rem', color: '#cbd5e1', borderLeft: '2px solid var(--primary)' }}>
+                    <strong>{agent.name.split(' ')[0]}AI:</strong> {lastAgentMsg.core[agent.id]}
+                  </div>
+                )}
 
-                {coreStates[agent.id] === 0 && (
+                {!coreStates[agent.id] && (
                   <button className="btn-primary"
                     style={{ width: '100%', background: 'var(--primary)', border: 'none', color: 'white', padding: '6px', borderRadius: '4px', fontSize: '0.7rem', fontWeight: '800', cursor: 'pointer' }}
                     onClick={() => {
@@ -414,17 +448,9 @@ import { agentsData } from "../data/agentsData"; export default function Dashboa
                       style={{ flex: 1, background: 'var(--accent)', border: 'none', color: 'black', padding: '6px', borderRadius: '4px', fontSize: '0.7rem', fontWeight: '800', cursor: 'pointer' }}
                       onClick={() => {
                         setCoreStates(prev => ({ ...prev, [agent.id]: 2 }));
-                        const successMsgs = {
-                          1: "Orchestration Balanced. Load distributed across 52 nodes.",
-                          2: "Pathways Optimized. Telemetry latency reduced by 14%.",
-                          3: "Global Optimum Locked. System operating at Nirvana state.",
-                          4: "Global IQ Synced. Production schedule adjusted for export demand.",
-                          5: "Node Optimized. Local latency stabilized at 1.2ms.",
-                          6: "Logs Processed. 3 maintenance tickets auto-generated from floor voice.",
-                          7: "Conflicts Resolved. Resource allocation is now non-overlapping."
-                        };
-                        setLastAgentMsg(prev => ({ ...prev, core: { ...prev.core, [agent.id]: successMsgs[agent.id] } }));
-                        setSystemEvents(prev => [{ id: Date.now(), time: new Date().toLocaleTimeString(), msg: `Core AI: ${agent.name} completed optimization.`, type: 'success' }, ...prev]);
+                        triggerOwnerRequest(agent.name.split(' ')[0] + 'AI', 'System Orchestration', lastAgentMsg.core[agent.id]).then(req => {
+                          if (req?._id) setCoreRequestIds(p => ({ ...p, [agent.id]: req._id }));
+                        });
                       }}
                     >
                       Process Now
@@ -434,7 +460,13 @@ import { agentsData } from "../data/agentsData"; export default function Dashboa
                 )}
 
                 {coreStates[agent.id] === 2 && (
-                  <div style={{ textAlign: 'center', color: 'var(--accent)', fontSize: '0.7rem', fontWeight: '800', padding: '4px' }}>
+                  <div style={{ textAlign: 'center', color: 'var(--accent)', fontSize: '0.7rem', fontWeight: '800', padding: '4px', animation: 'pulse 2s infinite' }}>
+                    Waiting for Executive Approval... ⏳
+                  </div>
+                )}
+
+                {coreStates[agent.id] === 3 && (
+                  <div style={{ textAlign: 'center', color: '#10b981', fontSize: '0.7rem', fontWeight: '800', padding: '4px' }}>
                     Status: OPTIMIZED ✅
                   </div>
                 )}

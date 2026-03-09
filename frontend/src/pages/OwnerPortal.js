@@ -40,11 +40,53 @@ const OwnerPortal = () => {
     return (
         <div className="flex flex-col min-h-screen text-white font-sans relative overflow-hidden" style={{ background: '#05060f' }}>
             {/* Premium Animated Background Elements */}
-            <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-600/10 rounded-full blur-[120px] animate-pulse"></div>
-            <div className="absolute bottom-[-10%] right-[-10%] w-[30%] h-[30%] bg-indigo-600/10 rounded-full blur-[100px]"></div>
+            <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-indigo-600/10 rounded-full blur-[140px] animate-pulse"></div>
+            <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-600/10 rounded-full blur-[120px]"></div>
+            <div className="absolute top-[20%] right-[10%] w-[20%] h-[20%] bg-purple-600/5 rounded-full blur-[100px]"></div>
 
-            {/* Cyber Grid Overlay */}
-            <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'linear-gradient(#4f46e5 1px, transparent 1px), linear-gradient(90deg, #4f46e5 1px, transparent 1px)', backgroundSize: '40px 40px' }}></div>
+            {/* Cyber Grid Overlay with Scanline Effect */}
+            <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'linear-gradient(#4f46e5 1px, transparent 1px), linear-gradient(90deg, #4f46e5 1px, transparent 1px)', backgroundSize: '60px 60px' }}></div>
+            <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-[0.03]">
+                <div className="w-full h-[5px] bg-indigo-500 blur-[2px] absolute top-[-10px] animate-scanline"></div>
+            </div>
+            <style>{`
+                @keyframes scanline {
+                    0% { top: -20px; }
+                    100% { top: 110%; }
+                }
+                .animate-scanline {
+                    animation: scanline 8s linear infinite;
+                }
+                .glass-card {
+                    background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
+                    backdrop-filter: blur(20px);
+                    border: 1px solid rgba(255, 255, 255, 0.08);
+                    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+                }
+                .glass-card:hover {
+                    border: 1px solid rgba(79, 70, 229, 0.3);
+                    box-shadow: 0 12px 48px 0 rgba(0, 0, 0, 0.6), inset 0 0 15px rgba(79, 70, 229, 0.05);
+                }
+                .shiny-button {
+                    position: relative;
+                    overflow: hidden;
+                }
+                .shiny-button::after {
+                    content: '';
+                    position: absolute;
+                    top: -50%;
+                    left: -50%;
+                    width: 200%;
+                    height: 200%;
+                    background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+                    transform: rotate(45deg);
+                    animation: shine 4s infinite;
+                }
+                @keyframes shine {
+                    0% { left: -200%; }
+                    100% { left: 200%; }
+                }
+            `}</style>
 
             <div className="relative z-10 flex-1 flex flex-col max-w-5xl mx-auto w-full px-4 py-8">
                 {/* Compact Header */}
@@ -136,51 +178,67 @@ const OwnerPortal = () => {
                     ) : (
                         <div className="space-y-4 pb-10">
                             {requests.map((req) => (
-                                <div key={req._id} className="relative bg-white/[0.06] backdrop-blur-3xl border border-white/10 rounded-[1.5rem] p-7 hover:bg-white/[0.08] transition-all group border-l-[6px] border-l-indigo-600 shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)]">
-                                    <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
-                                        <div className="flex-1">
-                                            <div className="flex flex-wrap items-center gap-4 mb-4">
-                                                <div className="flex items-center gap-2 bg-indigo-500/20 px-3 py-1 rounded-lg text-[10px] font-black tracking-widest text-indigo-300 uppercase border border-indigo-500/30">
-                                                    <BrainCircuit size={12} className="opacity-70" />
+                                <div key={req._id} className="relative glass-card rounded-[2rem] p-8 transition-all duration-500 group border-l-[4px] border-l-indigo-600/40 hover:border-l-indigo-500 active:scale-[0.995]">
+                                    {/* Background Glow on Hover */}
+                                    <div className="absolute inset-0 bg-indigo-500/[0.02] opacity-0 group-hover:opacity-100 transition-opacity rounded-[2rem] pointer-events-none"></div>
+
+                                    <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8">
+                                        <div className="flex-1 relative z-10">
+                                            <div className="flex flex-wrap items-center gap-4 mb-5">
+                                                <div className="flex items-center gap-2.5 bg-indigo-500/10 px-4 py-1.5 rounded-full text-[10px] font-black tracking-widest text-indigo-300 uppercase border border-indigo-500/20 shadow-lg">
+                                                    <BrainCircuit size={14} className="opacity-80" />
                                                     {req.agentName}
                                                 </div>
-                                                <div className="text-[10px] text-gray-500 font-bold flex items-center gap-1.5 uppercase tracking-wider">
-                                                    <Clock size={12} className="opacity-70" />
+                                                <div className="flex items-center gap-2 bg-white/5 px-4 py-1.5 rounded-full border border-white/5 text-[10px] font-bold text-gray-400 tracking-wider">
+                                                    <Clock size={12} className="opacity-60" />
                                                     {new Date(req.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                                 </div>
-                                                <div className="text-[10px] font-black text-gray-600 tracking-widest bg-white/5 px-2 py-0.5 rounded border border-white/5">
-                                                    SIG / {req._id.toString().slice(-8).toUpperCase()}
+                                                <div className="hidden lg:flex items-center gap-2 bg-white/5 px-4 py-1.5 rounded-full border border-white/5 text-[10px] font-black text-gray-500 tracking-[0.1em] uppercase">
+                                                    <Shield size={12} className="opacity-50" />
+                                                    SECURED_SIGNAL // {req._id.toString().slice(-8).toUpperCase()}
                                                 </div>
                                             </div>
 
-                                            <h3 className="text-2xl font-black text-white tracking-tight mb-2 group-hover:text-indigo-400 transition-colors">{req.requestType}</h3>
-                                            <p className="text-[14px] text-gray-400 font-medium leading-[1.6] max-w-2xl opacity-90">{req.details}</p>
+                                            <h3 className="text-3xl font-black text-white tracking-tight mb-3 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-indigo-300 transition-all duration-300">
+                                                {req.requestType}
+                                            </h3>
+                                            <p className="text-[15px] text-gray-400 font-medium leading-[1.7] max-w-2xl opacity-80 group-hover:opacity-100 transition-opacity">
+                                                {req.details}
+                                            </p>
                                         </div>
 
-                                        <div className="flex items-center gap-4 shrink-0 w-full lg:w-auto pt-4 lg:pt-0 border-t lg:border-t-0 border-white/5">
-                                            <div className="text-right flex-1 lg:flex-none mr-4">
-                                                <div className="text-[10px] font-black text-emerald-500 uppercase tracking-[0.2em] mb-1 opacity-80">Strategic Utility</div>
-                                                <div className="text-xs text-gray-300 font-bold italic tracking-tight">
+                                        <div className="flex flex-col sm:flex-row items-center gap-6 shrink-0 w-full lg:w-auto pt-6 lg:pt-0 border-t lg:border-t-0 border-white/5 relative z-10">
+                                            <div className="text-center lg:text-right flex-1 lg:flex-none">
+                                                <div className="text-[10px] font-black text-emerald-400 uppercase tracking-[0.25em] mb-2 opacity-80 flex items-center justify-center lg:justify-end gap-2">
+                                                    <Activity size={10} /> Strategic Utility
+                                                </div>
+                                                <div className="text-[13px] text-gray-200 font-black tracking-tighter bg-emerald-500/10 px-4 py-1.5 rounded-xl border border-emerald-500/20 shadow-inner">
                                                     {req.agentName === 'InventoryAI' ? 'Working Capital Optimization' : 'Direct Margin Enhancement'}
                                                 </div>
                                             </div>
-                                            <div className="flex items-center gap-3">
+
+                                            <div className="flex items-center gap-4 w-full sm:w-auto">
                                                 <button
                                                     onClick={() => handleAction(req._id, 'Rejected')}
-                                                    className="w-12 h-12 rounded-2xl border border-white/10 bg-white/5 text-gray-500 hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/40 transition-all flex items-center justify-center group/btn shadow-xl active:scale-95"
+                                                    className="w-14 h-14 rounded-2xl border border-white/5 bg-white/5 text-gray-500 hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/30 transition-all duration-300 flex items-center justify-center group/btn active:scale-95 overflow-hidden"
                                                     title="Reject Signal"
                                                 >
-                                                    <X size={22} className="group-hover/btn:scale-110 transition-transform" />
+                                                    <X size={24} className="group-hover/btn:scale-110 group-hover/btn:rotate-90 transition-all duration-300" />
                                                 </button>
                                                 <button
                                                     onClick={() => handleAction(req._id, 'Approved')}
-                                                    className="px-8 h-12 bg-indigo-600 hover:bg-indigo-500 rounded-2xl font-black text-[13px] text-white flex items-center gap-3 shadow-[0_15px_30px_rgba(79,70,229,0.3)] hover:shadow-[0_20px_40px_rgba(79,70,229,0.5)] transition-all active:scale-[0.97] group/approve"
+                                                    className="flex-1 sm:flex-none shiny-button h-14 bg-indigo-600 hover:bg-indigo-500 rounded-2xl px-10 font-black text-[14px] text-white flex items-center justify-center gap-3 shadow-[0_20px_40px_rgba(79,70,229,0.3)] hover:shadow-[0_25px_50px_rgba(79,70,229,0.5)] transition-all duration-300 active:scale-95 group/approve"
                                                 >
-                                                    <Check size={20} className="group-hover/approve:scale-110 transition-transform" strokeWidth={3} />
+                                                    <Check size={20} className="group-hover/approve:scale-120 transition-transform" strokeWidth={4} />
                                                     Execute Action
                                                 </button>
                                             </div>
                                         </div>
+                                    </div>
+
+                                    {/* Scanline element inside card */}
+                                    <div className="absolute right-8 top-1/2 -translate-y-1/2 opacity-[0.02] pointer-events-none group-hover:opacity-[0.05] transition-opacity">
+                                        <Zap size={140} className="text-white" />
                                     </div>
                                 </div>
                             ))}
