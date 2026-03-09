@@ -80,6 +80,8 @@ import { agentsData } from "../data/agentsData"; export default function Dashboa
   const [deadStockState, setDeadStockState] = useState(0);
   const [solarState, setSolarState] = useState(0);
   const [mahaparvState, setMahaparvState] = useState(0);
+  const [cottonYarnState, setCottonYarnState] = useState(0); // 0: Idle, 1: Awaiting, 2: Approved
+  const [machineHealthState, setMachineHealthState] = useState(0); // 0: Healthy, 1: Dispatched
 
   // Core Agent States (0: Idle, 1: Active/Syncing, 2: Completed)
   const [coreStates, setCoreStates] = useState({
@@ -120,6 +122,14 @@ import { agentsData } from "../data/agentsData"; export default function Dashboa
               if (req.agentName === 'LiquidityAI' && deadStockState === 2) setDeadStockState(3);
               if (req.agentName === 'EnergyAI' && solarState === 2) setSolarState(3);
               if (req.agentName === 'SwarmAI' && mahaparvState === 2) setMahaparvState(3);
+              if (req.agentName === 'InventoryAI' && cottonYarnState === 1) {
+                setCottonYarnState(2);
+                setYarnReordered(true);
+              }
+              if (req.agentName === 'MaintenanceAI' && machineHealthState === 1) {
+                setMachineHealthState(2);
+                setTicketGenerated(true);
+              }
               if (req.agentName === 'WhatsAppAI' && waStep === 3) {
                 setWaStep(4);
                 setYarnReordered(true);
@@ -143,7 +153,7 @@ import { agentsData } from "../data/agentsData"; export default function Dashboa
         console.error("Polling error:", err);
       }
     };
-    if (yarnState === 2 || truckState === 2 || deadStockState === 2 || solarState === 2 || mahaparvState === 2 || waStep === 3) {
+    if (yarnState === 2 || truckState === 2 || deadStockState === 2 || solarState === 2 || mahaparvState === 2 || waStep === 3 || cottonYarnState === 1 || machineHealthState === 1) {
       const interval = setInterval(pollRequests, 3000);
       return () => clearInterval(interval);
     }
@@ -802,19 +812,19 @@ import { agentsData } from "../data/agentsData"; export default function Dashboa
                 <p style={{ fontSize: '0.75rem', opacity: 0.8, margin: 0, marginBottom: '1rem', lineHeight: 1.4, flex: 1, color: '#e2e8f0' }}>Stock depletion in 2 days</p>
                 <button
                   className="btn-primary"
-                  style={{ width: '100%', background: yarnReordered ? 'var(--accent)' : '#ef4444', fontSize: '0.8rem', padding: '8px', border: 'none', color: 'white', cursor: yarnReordered ? 'default' : 'pointer', borderRadius: '6px', fontWeight: 'bold', transition: 'all 0.2s' }}
-                  disabled={yarnReordered || yarnLoading}
+                  style={{ width: '100%', background: cottonYarnState === 2 ? 'var(--accent)' : cottonYarnState === 1 ? 'rgba(59, 130, 246, 0.2)' : '#ef4444', fontSize: '0.8rem', padding: '8px', border: cottonYarnState === 1 ? '1px solid #60a5fa' : 'none', color: cottonYarnState === 1 ? '#60a5fa' : 'white', cursor: (cottonYarnState === 2 || cottonYarnState === 1) ? 'default' : 'pointer', borderRadius: '6px', fontWeight: 'bold', transition: 'all 0.2s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+                  disabled={cottonYarnState === 2 || cottonYarnState === 1 || yarnLoading}
                   onClick={() => {
-                    setYarnLoading(true);
-                    setTimeout(() => {
-                      setYarnLoading(false);
-                      setYarnReordered(true);
-                      setWaStep(4);
-                      setSystemEvents(prev => [{ id: Date.now(), time: new Date().toLocaleTimeString(), msg: 'Auto-Reorder: 500kg Cotton Yarn PO sent.', type: 'success' }, ...prev]);
-                    }, 1500);
+                    setCottonYarnState(1);
+                    triggerOwnerRequest('InventoryAI', 'Material Reorder', 'Auto-reorder 500kg Cotton Yarn due to low stock alert.');
                   }}
                 >
-                  {yarnLoading ? 'Processing PO...' : yarnReordered ? 'Material Ordered ✅' : 'Auto-Reorder Material'}
+                  {cottonYarnState === 1 ? (
+                    <>
+                      <div className="pulse" style={{ width: '8px', height: '8px', background: '#60a5fa', borderRadius: '50%' }}></div>
+                      Waiting for Owner...
+                    </>
+                  ) : cottonYarnState === 2 ? 'Material Ordered ✅' : 'Auto-Reorder Material'}
                 </button>
               </div>
 
@@ -992,13 +1002,24 @@ import { agentsData } from "../data/agentsData"; export default function Dashboa
                   onChange={(e) => {
                     const val = parseInt(e.target.value);
                     setMachineVibration(val);
-                    if (val > 85 && !ticketGenerated) {
-                      setTicketGenerated(true);
-                      setSystemEvents(prev => [{ id: Date.now(), time: new Date().toLocaleTimeString(), msg: `⚠️ CRITICAL: Loom Vibration spiked to ${val}Hz. Auto-generating Maintenance Ticket #MX-992.`, type: 'danger' }, ...prev]);
+                    if (val > 85 && machineHealthState === 0) {
+                      setMachineHealthState(1);
+                      triggerOwnerRequest('MaintenanceAI', 'Emergency Repair', `CRITICAL: Loom Vibration spiked to ${val}Hz. Dispatched technician requested.`);
                     }
                   }}
                   style={{ width: '100%', marginTop: '1rem', accentColor: machineVibration > 85 ? 'var(--danger)' : machineVibration > 65 ? 'var(--warning)' : 'var(--accent)', cursor: 'ew-resize' }}
                 />
+                {machineHealthState === 1 && (
+                  <div style={{ marginTop: '10px', textAlign: 'center', padding: '6px', background: 'rgba(239, 68, 68, 0.1)', borderRadius: '6px', color: '#ef4444', fontWeight: 'bold', fontSize: '0.7rem', border: '1px solid rgba(239, 68, 68, 0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+                    <div className="pulse" style={{ width: '8px', height: '8px', background: '#ef4444', borderRadius: '50%' }}></div>
+                    Emergency Request Sent to Owner
+                  </div>
+                )}
+                {machineHealthState === 2 && (
+                  <div style={{ marginTop: '10px', textAlign: 'center', padding: '6px', background: 'rgba(16, 185, 129, 0.2)', borderRadius: '6px', color: '#10b981', fontWeight: 'bold', fontSize: '0.7rem' }}>
+                    Technician Dispatched ✅
+                  </div>
+                )}
               </div>
 
             </div>
