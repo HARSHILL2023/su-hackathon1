@@ -103,6 +103,8 @@ import { agentsData } from "../data/agentsData"; export default function Dashboa
     1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0
   });
 
+  const [whatsappSuggestions, setWhatsappSuggestions] = useState([]);
+
   const [lastAgentMsg, setLastAgentMsg] = useState({
     yarn: "Expected 8% price hike in Bhilwara Mandi by Friday.",
     truck: "200 Rolls ready. An empty truck returning to Surat is 5km away.",
@@ -119,6 +121,29 @@ import { agentsData } from "../data/agentsData"; export default function Dashboa
       7: "Scanning for Resource Conflicts..."
     }
   });
+
+  // --- New Overhaul States ---
+  const [strategicAiLogs, setStrategicAiLogs] = useState([
+    { id: 1, time: new Date().toLocaleTimeString(), msg: "SYSTEM INITIALIZED: Brahma Kernel v2.1.0", type: "system" },
+    { id: 2, time: new Date().toLocaleTimeString(), msg: "Neural-Sync complete across 52 edge nodes.", type: "success" }
+  ]);
+  const [focusedAgent, setFocusedAgent] = useState(null);
+
+  useEffect(() => {
+    const logInterval = setInterval(() => {
+      const logPool = [
+        { msg: "[Agent-14] Detecting yarn tension micro-drift on Loom 4. Recalibrating...", type: "info" },
+        { msg: "[Agent-22] Quality Audit: Purity check on Batch-92 passed (99.8%).", type: "success" },
+        { msg: "[Agent-05] Energy Spike detected in Section B. Transitioning to Solar Grid.", type: "warning" },
+        { msg: "[Agent-51] Sentiment Analysis: Buyer 'Surat-A1' showing high reorder intent.", type: "info" },
+        { msg: "[Brahma] Balancing network load. Syncing telemetry to Edge Node 12.", type: "system" },
+        { msg: "[Agent-33] Warehouse Temp stable. Humidity drift corrected (+1.5% RH).", type: "success" }
+      ];
+      const randomLog = logPool[Math.floor(Math.random() * logPool.length)];
+      setStrategicAiLogs(prev => [{ id: Date.now(), time: new Date().toLocaleTimeString(), ...randomLog }, ...prev.slice(0, 49)]);
+    }, 8000);
+    return () => clearInterval(logInterval);
+  }, []);
 
   // --- Dynamic Core Agent Data Engine (Realistic Simulation) ---
   useEffect(() => {
@@ -425,22 +450,23 @@ import { agentsData } from "../data/agentsData"; export default function Dashboa
   }, []);
 
   const renderAgentGrid = (categories, title) => (
-    <div className="stat-card" style={{ marginTop: '1.5rem', background: 'rgba(99, 102, 241, 0.05)', border: '1px solid rgba(99, 102, 241, 0.2)' }}>
-      <h3 className="section-title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-        <Bot size={18} color="var(--primary)" /> {title} (From 52 Agent Library)
+    <div className="industrial-panel" style={{ padding: '2rem', marginTop: '3rem', borderTop: '2px solid var(--primary-20)', borderRadius: '1rem' }}>
+      <h3 className="section-title" style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--primary)', letterSpacing: '2px', textTransform: 'uppercase' }}>
+        <Network size={22} /> {title} (From 52 Agent Library)
       </h3>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '16px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '16px', marginTop: '1.5rem' }}>
         {agentsData.filter(a => categories.includes(a.category)).map(agent => (
           <div key={typeof agent.id === 'object' ? JSON.stringify(agent.id) : agent.id} style={{
-            background: 'rgba(255,255,255,0.02)',
-            border: '1px solid rgba(255,255,255,0.05)',
+            background: focusedAgent?.id === agent.id ? 'rgba(99, 102, 241, 0.1)' : 'rgba(255,255,255,0.02)',
+            border: focusedAgent?.id === agent.id ? '2px solid var(--primary)' : '1px solid rgba(255,255,255,0.05)',
             borderRadius: '12px',
             padding: '16px',
-            transition: 'all 0.2s',
-            cursor: 'default'
+            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+            cursor: 'pointer',
+            position: 'relative',
+            overflow: 'hidden'
           }}
-            onMouseOver={(e) => { e.currentTarget.style.background = 'rgba(99, 102, 241, 0.05)'; e.currentTarget.style.borderColor = 'rgba(99, 102, 241, 0.3)'; }}
-            onMouseOut={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.02)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.05)'; }}
+            onClick={() => setFocusedAgent(focusedAgent?.id === agent.id ? null : agent)}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
               <span style={{ fontSize: '0.65rem', background: 'rgba(255,255,255,0.1)', padding: '2px 6px', borderRadius: '4px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{typeof agent.category === 'object' ? JSON.stringify(agent.category) : agent.category}</span>
@@ -454,12 +480,18 @@ import { agentsData } from "../data/agentsData"; export default function Dashboa
               </div>
             )}
 
-            {/* Interactive Logic for Core Systems */}
-            {agent.category === 'Core Systems' && (
-              <div style={{ marginTop: '12px', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                <div style={{ fontSize: '0.65rem', color: '#94a3b8', fontStyle: 'italic', marginBottom: '2px', lineHeight: '1.4' }}>
+            {/* Tactical Telemetry on Focus */}
+            {focusedAgent?.id === agent.id && (
+              <div className="animate-fade-in" style={{ marginTop: '12px', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '12px' }}>
+                <div style={{ fontSize: '0.65rem', color: 'var(--primary)', fontWeight: 'bold', marginBottom: '6px', letterSpacing: '1px' }}>AGENT TELEMETRY STREAM</div>
+                <div style={{ height: '40px', display: 'flex', alignItems: 'flex-end', gap: '2px', background: 'rgba(0,0,0,0.2)', padding: '4px', borderRadius: '4px' }}>
+                  {[...Array(15)].map((_, i) => (
+                    <div key={i} style={{ flex: 1, background: 'var(--primary)', height: `${20 + Math.random() * 80}%`, opacity: 0.3 + (i / 15 * 0.5) }}></div>
+                  ))}
+                </div>
+                <div style={{ marginTop: '10px', fontSize: '0.7rem', color: '#94a3b8', fontStyle: 'italic', lineHeight: '1.4' }}>
                   {
-                    {
+                    agent.category === 'Core Systems' ? ({
                       1: "Master control node balancing 52 sub-agents to prevent system lag.",
                       2: "Central nervous system syncing telemetry between edge looms and cloud.",
                       3: "Calculates global permutations for optimum production schedule.",
@@ -467,66 +499,14 @@ import { agentsData } from "../data/agentsData"; export default function Dashboa
                       5: "Zero-latency processor for critical machine safety shutdowns.",
                       6: "Translates Hindi/Mewari voice commands into machine code.",
                       7: "Automatically resolves resource conflicts between AI sub-agents."
-                    }[agent.id]
+                    }[agent.id] || "Analyzing core system throughput...") : "Agent actively monitoring cluster performance and optimizing local edge compute."
                   }
                 </div>
-                {lastAgentMsg.core[agent.id] && (
-                  <div style={{ background: 'rgba(99, 102, 241, 0.1)', padding: '8px', borderRadius: '6px', fontSize: '0.75rem', color: '#cbd5e1', borderLeft: '2px solid var(--primary)' }}>
-                    <strong>{agent.name.split(' ')[0]}AI:</strong> {lastAgentMsg.core[agent.id]}
-                  </div>
-                )}
-
-                {!coreStates[agent.id] && (
-                  <button className="btn-primary"
-                    style={{ width: '100%', background: 'var(--primary)', border: 'none', color: 'white', padding: '6px', borderRadius: '4px', fontSize: '0.7rem', fontWeight: '800', cursor: 'pointer' }}
-                    onClick={() => {
-                      setCoreStates(prev => ({ ...prev, [agent.id]: 1 }));
-                      const msgs = {
-                        1: "Re-balancing agent weights for current shift. Efficiency delta: +2.1%. Proceed?",
-                        2: "Detected neural bottleneck in Loom 4 telemetry. Run Neuro-Optimization?",
-                        3: "Synchronizing global optimum across all clusters. Resource lock required. Engage?",
-                        4: "Export demand rising in Bursa cluster. Sync factory patterns with Global IQ?",
-                        5: "Node load high. Offload non-critical telemetry to cloud to reduce local lag?",
-                        6: "Processing last 4 hours of Hindi/Mewari logs. Extract actionable insights?",
-                        7: "Minor resource overlap between Yarn & Logistics agents. Run Conflict Audit?"
-                      };
-                      setLastAgentMsg(prev => ({ ...prev, core: { ...prev.core, [agent.id]: msgs[agent.id] } }));
-                    }}
-                  >
-                    Engage Agent
-                  </button>
-                )}
-
-                {coreStates[agent.id] === 1 && (
-                  <div style={{ display: 'flex', gap: '4px' }}>
-                    <button className="btn-primary"
-                      style={{ flex: 1, background: 'var(--accent)', border: 'none', color: 'black', padding: '6px', borderRadius: '4px', fontSize: '0.7rem', fontWeight: '800', cursor: 'pointer' }}
-                      onClick={() => {
-                        setCoreStates(prev => ({ ...prev, [agent.id]: 2 }));
-                        triggerOwnerRequest(agent.name.split(' ')[0] + 'AI', 'System Orchestration', lastAgentMsg.core[agent.id]).then(req => {
-                          if (req?._id) setCoreRequestIds(p => ({ ...p, [agent.id]: req._id }));
-                        });
-                      }}
-                    >
-                      Process Now
-                    </button>
-                    <button className="btn-primary" style={{ background: 'rgba(255,255,255,0.05)', border: 'none', color: 'white', padding: '6px', borderRadius: '4px', fontSize: '0.7rem', fontWeight: '800', cursor: 'pointer' }} onClick={() => setCoreStates(prev => ({ ...prev, [agent.id]: 0 }))}>Hold</button>
-                  </div>
-                )}
-
-                {coreStates[agent.id] === 2 && (
-                  <div style={{ textAlign: 'center', color: 'var(--accent)', fontSize: '0.7rem', fontWeight: '800', padding: '4px', animation: 'pulse 2s infinite' }}>
-                    Waiting for Executive Approval... ⏳
-                  </div>
-                )}
-
-                {coreStates[agent.id] === 3 && (
-                  <div style={{ textAlign: 'center', color: '#10b981', fontSize: '0.7rem', fontWeight: '800', padding: '4px' }}>
-                    Status: OPTIMIZED ✅
-                  </div>
-                )}
               </div>
             )}
+
+            {/* Tactical Corner Decoration */}
+            <div style={{ position: 'absolute', top: 0, right: 0, width: '15px', height: '15px', borderTop: '1px solid var(--primary)', borderRight: '1px solid var(--primary)', opacity: 0.3 }}></div>
           </div>
         ))}
       </div>
@@ -749,8 +729,51 @@ import { agentsData } from "../data/agentsData"; export default function Dashboa
           </div>
         </header>
 
+        <div className="scanner-overlay" />
+
         {activeTab === 'overview' && (
-          <>
+          <div className="cyber-grid" style={{ padding: '0 1rem' }}>
+            {/* NEW: Neural Orchestrator Panel */}
+            <div className="industrial-panel" style={{ padding: '2.5rem', marginBottom: '2.5rem', borderRadius: '1rem', border: '1px solid var(--primary-20)' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3rem' }}>
+                <div style={{ position: 'relative', height: '300px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  {/* Neural Brain SVG Visualization */}
+                  <svg width="300" height="300" viewBox="0 0 100 100" style={{ animation: 'neural-pulse 4s infinite ease-in-out' }}>
+                    <circle cx="50" cy="50" r="10" fill="var(--primary)" opacity="0.4" />
+                    <circle cx="50" cy="50" r="15" stroke="var(--primary)" fill="none" strokeWidth="0.5" strokeDasharray="2 2" />
+                    <circle cx="50" cy="50" r="25" stroke="var(--primary-20)" fill="none" strokeWidth="0.5" />
+                    {[...Array(12)].map((_, i) => (
+                      <g key={i} transform={`rotate(${i * 30} 50 50)`}>
+                        <line x1="50" y1="25" x2="50" y2="10" stroke="var(--primary)" strokeWidth="0.2" opacity="0.5" />
+                        <circle cx="50" cy="10" r="1" fill={i % 3 === 0 ? "var(--accent)" : "var(--primary)"}>
+                          <animate attributeName="opacity" values="0.2;1;0.2" dur={`${2 + i % 3}s`} repeatCount="indefinite" />
+                        </circle>
+                      </g>
+                    ))}
+                    <text x="50" y="52" fontSize="6" textAnchor="middle" fill="white" fontWeight="bold">HQ</text>
+                  </svg>
+                  <div style={{ position: 'absolute', bottom: '0', textAlign: 'center', width: '100%' }}>
+                    <div style={{ fontSize: '0.65rem', letterSpacing: '2px', color: 'var(--primary)', fontWeight: 'bold' }}>NEURAL ORCHESTRATOR</div>
+                    <div style={{ fontSize: '0.9rem', color: 'white', fontWeight: 'bold' }}>52 Agents Synced</div>
+                  </div>
+                </div>
+
+                <div style={{ background: 'rgba(0,0,0,0.3)', borderRadius: '12px', padding: '1.5rem', border: '1px solid var(--border)', display: 'flex', flexDirection: 'column' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '1rem', color: 'var(--primary)' }}>
+                    <Activity size={18} />
+                    <span style={{ fontSize: '0.8rem', fontWeight: 'bold', letterSpacing: '1px' }}>STRATEGIC AI COMMAND LOG</span>
+                  </div>
+                  <div style={{ flex: 1, overflowY: 'auto', maxHeight: '200px', fontSize: '0.75rem', fontFamily: 'monospace' }}>
+                    {strategicAiLogs.map(log => (
+                      <div key={log.id} style={{ marginBottom: '6px', borderLeft: `2px solid ${log.type === 'success' ? 'var(--accent)' : log.type === 'warning' ? 'var(--amber-glow)' : log.type === 'system' ? 'var(--primary)' : 'var(--slate-500)'}`, paddingLeft: '8px' }}>
+                        <span style={{ color: 'var(--text-muted)' }}>[{log.time}]</span> <span style={{ color: log.type === 'success' ? 'var(--accent)' : log.type === 'warning' ? 'var(--amber-glow)' : 'white' }}>{log.msg}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <div className="executive-banner" style={{ background: 'linear-gradient(135deg, #4f46e5 0%, #0f172a 100%)', padding: '2.5rem', borderRadius: '1.5rem', marginBottom: '2.5rem', position: 'relative', overflow: 'hidden', boxShadow: '0 20px 50px rgba(0,0,0,0.3)' }}>
               <div style={{ position: 'relative', zIndex: 2 }}>
                 <h2 style={{ fontSize: '2.4rem', fontWeight: '800', marginBottom: '0.5rem', letterSpacing: '-0.02em' }}>TexTech Intelligence Hub</h2>
@@ -1272,63 +1295,78 @@ import { agentsData } from "../data/agentsData"; export default function Dashboa
             </div>
 
             {/* HACKATHON WINNER: Interactive WhatsApp Chat Simulation */}
-            <div className="stat-card mt-6" style={{ background: 'linear-gradient(rgba(37, 211, 102, 0.05), transparent)', border: '1px solid rgba(37, 211, 102, 0.2)' }}>
-              <h3 className="section-title" style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#25D366', marginBottom: '1.5rem', justifyContent: 'space-between' }}>
-                <span style={{ display: 'flex', alignItems: 'center', gap: '10px' }}><MessageCircle size={22} /> AI WhatsApp Factory Assistant (Live Sync)</span>
-
-                {/* Real Twilio SMS Trigger */}
-                <div style={{ display: 'flex', gap: '8px', alignItems: 'center', background: 'rgba(0,0,0,0.3)', padding: '4px 12px', borderRadius: '20px', border: '1px solid rgba(37,211,102,0.3)' }}>
-                  <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Live Demo:</span>
-                  <input
-                    type="text"
-                    placeholder="+1234567890"
-                    value={twilioPhone}
-                    onChange={(e) => setTwilioPhone(e.target.value)}
-                    style={{ background: 'transparent', border: 'none', color: '#fff', fontSize: '0.85rem', outline: 'none', width: '120px' }}
-                  />
-                  <button
-                    onClick={async () => {
-                      if (!twilioPhone) return alert("Enter a phone number including country code (e.g., +1234567890)");
-                      const msg = "SmartFactory AI Alert: I am your AI Factory Assistant. You can now reply to this thread with any custom request or approval, and I will route it to the Owner Terminal.";
-                      try {
-                        const res = await fetch('http://localhost:5000/api/whatsapp/send', {
-                          method: 'POST',
-                          headers: { 'Content-Type': 'application/json' },
-                          body: JSON.stringify({ to: twilioPhone.trim(), message: msg })
-                        });
-                        if (res.ok) {
-                          setTwilioSent(true);
-                          setSystemEvents(prev => [{ id: Date.now(), time: new Date().toLocaleTimeString(), msg: `Live WhatsApp Alert sent via Twilio to ${twilioPhone}`, type: 'success' }, ...prev]);
-                        } else {
-                          alert("Failed to send WhatsApp message. Check backend Twilio setup.");
-                        }
-                      } catch (err) {
-                        alert("Network error. Backend not running?");
-                      }
-                    }}
-                    disabled={twilioSent}
-                    style={{ background: twilioSent ? '#334155' : '#25D366', color: twilioSent ? '#94a3b8' : '#000', border: 'none', borderRadius: '12px', padding: '4px 10px', fontSize: '0.75rem', fontWeight: 'bold', cursor: twilioSent ? 'default' : 'pointer' }}
-                  >
-                    {twilioSent ? 'Sent ✅' : 'Send Alert 🚀'}
-                  </button>
+            <div className="industrial-panel mt-6" style={{ background: 'linear-gradient(rgba(37, 211, 102, 0.05), transparent)', border: '1px solid rgba(37, 211, 102, 0.2)', padding: '1.5rem', borderRadius: '1rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                <h3 className="section-title" style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#25D366', margin: 0 }}>
+                  <MessageCircle size={22} /> AI WhatsApp Factory Assistant (Voice & Signal Hub)
+                </h3>
+                <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
+                  <div style={{ display: 'flex', gap: '3px', alignItems: 'flex-end', height: '15px' }}>
+                    {[...Array(5)].map((_, i) => (
+                      <div key={i} style={{ width: '3px', height: `${20 * (i + 1)}%`, background: '#25D366', opacity: 0.8 }}></div>
+                    ))}
+                    <span style={{ fontSize: '0.6rem', color: '#25D366', fontWeight: 'bold', marginLeft: '5px' }}>SIGNAL: ENCRYPTED</span>
+                  </div>
                 </div>
-              </h3>
+              </div>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', background: '#0b141a', padding: '1.5rem', borderRadius: '16px', backgroundImage: 'url("https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png")', backgroundSize: 'cover', backgroundBlendMode: 'overlay', border: '1px solid rgba(255,255,255,0.05)' }}>
+              {/* Real Twilio SMS Trigger */}
+              <div style={{ display: 'flex', gap: '8px', alignItems: 'center', background: 'rgba(0,0,0,0.5)', padding: '6px 12px', borderRadius: '20px', border: '1px solid rgba(37,211,102,0.2)', marginBottom: '1rem' }}>
+                <span style={{ fontSize: '0.7rem', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '1px' }}>External Link:</span>
+                <input
+                  type="text"
+                  placeholder="+CountryCodeNumber"
+                  value={twilioPhone}
+                  onChange={(e) => setTwilioPhone(e.target.value)}
+                  style={{ background: 'transparent', border: 'none', color: '#fff', fontSize: '0.8rem', outline: 'none', width: '150px' }}
+                />
+                <button
+                  onClick={async () => {
+                    if (!twilioPhone) return alert("Enter a phone number including country code (e.g., +1234567890)");
+                    const msg = "SmartFactory AI Alert: I am your AI Factory Assistant. Core system synchronized. Waiting for your commands.";
+                    try {
+                      const res = await fetch('http://localhost:5000/api/whatsapp/send', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ to: twilioPhone.trim(), message: msg })
+                      });
+                      if (res.ok) {
+                        setTwilioSent(true);
+                        setSystemEvents(prev => [{ id: Date.now(), time: new Date().toLocaleTimeString(), msg: `Live WhatsApp Alert sent via Twilio to ${twilioPhone}`, type: 'success' }, ...prev]);
+                      } else {
+                        alert("Failed to send WhatsApp message. Check backend Twilio setup.");
+                      }
+                    } catch (err) {
+                      alert("Network error. Backend not running?");
+                    }
+                  }}
+                  disabled={twilioSent}
+                  style={{ background: twilioSent ? '#334155' : 'linear-gradient(90deg, #25D366, #128C7E)', color: 'white', border: 'none', borderRadius: '12px', padding: '6px 16px', fontSize: '0.75rem', fontWeight: 'bold', cursor: twilioSent ? 'default' : 'pointer', transition: 'all 0.3s' }}
+                >
+                  {twilioSent ? 'Transmitted ✓' : 'Engage Twilio Relay'}
+                </button>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', background: '#0b141a', padding: '1.5rem', borderRadius: '16px', backgroundImage: 'url("https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png")', backgroundSize: 'cover', backgroundBlendMode: 'overlay', border: '1px solid rgba(255,255,255,0.05)', position: 'relative', overflow: 'hidden' }}>
+
+                {/* Voice Feed Decoration */}
+                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(90deg, transparent, #25D366, transparent)', opacity: 0.3, animation: 'neural-pulse 3s infinite' }}></div>
 
                 {/* Message 1: AI General Prompt */}
-                <div style={{ alignSelf: 'flex-start', background: '#202c33', padding: '10px 14px', borderRadius: '0 8px 8px 8px', maxWidth: '80%', boxShadow: '0 1px 2px rgba(0,0,0,0.3)' }}>
-                  <div style={{ fontSize: '0.75rem', color: '#25D366', fontWeight: 'bold', marginBottom: '4px' }}>Maha-Connect AI</div>
+                <div style={{ alignSelf: 'flex-start', background: '#202c33', padding: '10px 14px', borderRadius: '0 8px 8px 8px', maxWidth: '80%', boxShadow: '0 1px 2px rgba(0,0,0,0.3)', borderLeft: '3px solid #25D366' }}>
+                  <div style={{ fontSize: '0.75rem', color: '#25D366', fontWeight: 'bold', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                    <Mic size={12} /> Maha-Connect Voice Assistant
+                  </div>
                   <div style={{ fontSize: '0.9rem', color: '#e9edef', lineHeight: '1.4' }}>
-                    Welcome to Maha-Connect. I am your SmartFactory AI Assistant. <br /><br />
-                    Type your custom request for the Owner Terminal below, or tap an AI suggestion pill to draft instantly.
+                    System online. I am monitoring the factory floor. <br /><br />
+                    State your request or use the tactical suggestions below to command the factory.
                   </div>
                   <div style={{ fontSize: '0.65rem', color: '#8696a0', textAlign: 'right', marginTop: '4px' }}>{new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
                 </div>
 
                 {/* Message 2: Exact User Request */}
                 {waStep >= 1 && (
-                  <div style={{ alignSelf: 'flex-end', background: '#005c4b', padding: '10px 14px', borderRadius: '8px 0 8px 8px', maxWidth: '80%', boxShadow: '0 1px 2px rgba(0,0,0,0.3)', marginTop: '8px' }}>
+                  <div style={{ alignSelf: 'flex-end', background: '#005c4b', padding: '10px 14px', borderRadius: '8px 0 8px 8px', maxWidth: '80%', boxShadow: '0 1px 2px rgba(0,0,0,0.3)', marginTop: '8px', borderRight: '3px solid #53bdeb' }}>
                     <div style={{ fontSize: '0.9rem', color: '#e9edef', lineHeight: '1.4' }}>
                       {ownerReply}
                     </div>
@@ -1338,18 +1376,20 @@ import { agentsData } from "../data/agentsData"; export default function Dashboa
 
                 {/* Message 3: AI Status Update */}
                 {waStep >= 1 && (
-                  <div style={{ alignSelf: 'flex-start', background: '#202c33', padding: '10px 14px', borderRadius: '0 8px 8px 8px', maxWidth: '80%', boxShadow: '0 1px 2px rgba(0,0,0,0.3)', marginTop: '8px' }}>
-                    <div style={{ fontSize: '0.75rem', color: '#25D366', fontWeight: 'bold', marginBottom: '4px' }}>Maha-Connect AI</div>
+                  <div style={{ alignSelf: 'flex-start', background: '#202c33', padding: '10px 14px', borderRadius: '0 8px 8px 8px', maxWidth: '80%', boxShadow: '0 1px 2px rgba(0,0,0,0.3)', marginTop: '8px', borderLeft: '3px solid #25D366' }}>
+                    <div style={{ fontSize: '0.75rem', color: '#25D366', fontWeight: 'bold', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                      <Zap size={12} /> Command Relay
+                    </div>
                     <div style={{ fontSize: '0.9rem', color: '#e9edef', lineHeight: '1.4' }}>
                       {waStep === 1 ? (
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                           <div className="pulse" style={{ width: '8px', height: '8px', background: '#25D366', borderRadius: '50%' }}></div>
-                          Request sent to Owner Terminal. Waiting for approval...
+                          Transmitting command to Executive Terminal...
                         </div>
                       ) : waStep === 2 ? (
-                        <div style={{ color: '#10b981', fontWeight: 'bold' }}>Request Approved by Owner ✅</div>
+                        <div style={{ color: '#10b981', fontWeight: 'bold' }}>Command Executed by Owner ✅</div>
                       ) : (
-                        <div style={{ color: '#ef4444', fontWeight: 'bold' }}>Request Rejected by Owner ❌</div>
+                        <div style={{ color: '#ef4444', fontWeight: 'bold' }}>Command Aborted by Owner ❌</div>
                       )}
                     </div>
                     {waStep >= 2 && <div style={{ fontSize: '0.65rem', color: '#8696a0', textAlign: 'right', marginTop: '4px' }}>{new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>}
@@ -1361,14 +1401,14 @@ import { agentsData } from "../data/agentsData"; export default function Dashboa
               {waStep === 0 && (
                 <div style={{ marginTop: '1rem' }}>
                   {/* AI Suggestions Row */}
-                  <div style={{ display: 'flex', gap: '8px', marginBottom: '8px', flexWrap: 'wrap' }}>
+                  <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', flexWrap: 'wrap' }}>
                     {whatsappSuggestions.map(sugg => (
                       <button
                         key={sugg}
                         onClick={() => setOwnerReply(sugg)}
-                        style={{ background: 'rgba(37, 211, 102, 0.1)', border: '1px solid rgba(37, 211, 102, 0.3)', color: '#25D366', borderRadius: '12px', padding: '6px 12px', fontSize: '0.75rem', cursor: 'pointer', transition: 'all 0.2s', whiteSpace: 'nowrap' }}
-                        onMouseOver={(e) => { e.currentTarget.style.background = 'rgba(37, 211, 102, 0.2)'; }}
-                        onMouseOut={(e) => { e.currentTarget.style.background = 'rgba(37, 211, 102, 0.1)'; }}
+                        style={{ background: 'rgba(37, 211, 102, 0.05)', border: '1px solid rgba(37, 211, 102, 0.2)', color: '#25D366', borderRadius: '12px', padding: '6px 14px', fontSize: '0.7rem', cursor: 'pointer', transition: 'all 0.3s', whiteSpace: 'nowrap', textTransform: 'uppercase', fontWeight: 'bold', letterSpacing: '0.5px' }}
+                        onMouseOver={(e) => { e.currentTarget.style.background = 'rgba(37, 211, 102, 0.1)'; e.currentTarget.style.borderColor = '#25D366'; }}
+                        onMouseOut={(e) => { e.currentTarget.style.background = 'rgba(37, 211, 102, 0.05)'; e.currentTarget.style.borderColor = 'rgba(37, 211, 102, 0.2)'; }}
                       >
                         {sugg}
                       </button>
@@ -1379,7 +1419,7 @@ import { agentsData } from "../data/agentsData"; export default function Dashboa
                   <div style={{ display: 'flex', gap: '8px', background: '#0b141a', padding: '10px', borderRadius: '24px', border: '1px solid rgba(255,255,255,0.1)', alignItems: 'center' }}>
                     <input
                       type="text"
-                      placeholder="Type a custom request for the Owner..."
+                      placeholder="State command for factory owner..."
                       value={ownerReply}
                       onChange={(e) => setOwnerReply(e.target.value)}
                       onKeyDown={async (e) => {
@@ -1410,7 +1450,7 @@ import { agentsData } from "../data/agentsData"; export default function Dashboa
             </div>
 
             {renderAgentGrid(['Core Systems'], 'Core AI & Orchestration')}
-          </>
+          </div>
         )}
 
         {
