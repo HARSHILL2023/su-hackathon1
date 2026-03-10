@@ -110,15 +110,72 @@ import { agentsData } from "../data/agentsData"; export default function Dashboa
     solar: "Loom startup peak detected. Recommend shifting Loom 4 & 5 startup to 12:30 PM.",
     mahaparv: "Wedding season & Navratri scraping predicts 400% surge in specific design demand.",
     core: {
-      1: "Brahma Orchestrator is balancing 52 sub-agents.",
-      2: "Neuro-Sync: Neural pathways established with edge nodes.",
-      3: "Quantum-Swarm: Maintaining global optimum efficiency.",
-      4: "Maha-Orchestrator: Monitoring global market trends.",
-      5: "Edge Node: Bhilwara latency is < 2ms.",
-      6: "NLP Engine: Processing shop-floor voice-logs.",
-      7: "Conflict Resolver: Zero system-lock detected."
+      1: "INITIALIZING BRAHMA KERNEL...",
+      2: "ESTABLISHING NEURO-SYNC PATHWAYS...",
+      3: "CALCULATING QUANTUM PERMUTATIONS...",
+      4: "SYNCING MAHA-ORCHESTRATOR...",
+      5: "Pinging Edge Node Bhilwara...",
+      6: "Loading NLP Models...",
+      7: "Scanning for Resource Conflicts..."
     }
   });
+
+  // --- Dynamic Core Agent Data Engine (Realistic Simulation) ---
+  useEffect(() => {
+    const generateDynamicData = () => {
+      setLastAgentMsg(prev => {
+        const newCoreState = { ...prev.core };
+
+        // Only update if the agent is in the idle ("monitoring") state
+        if (coreStates[1] === 0) {
+          const cpuLoad = (Math.random() * (85 - 30) + 30).toFixed(1);
+          const activeNodes = Math.floor(Math.random() * (52 - 45) + 45);
+          newCoreState[1] = `[Brahma Kernel] Load: ${cpuLoad}%. Balancing ${activeNodes}/52 sub-agents. Active threads: ${Math.floor(Math.random() * 5000 + 1000)}.`;
+        }
+
+        if (coreStates[2] === 0) {
+          const packetLoss = (Math.random() * 0.05).toFixed(3);
+          const syncRate = Math.floor(Math.random() * (1200 - 800) + 800);
+          newCoreState[2] = `[Neuro-Sync] Edge telemetry sync rate: ${syncRate} ops/sec. Packet loss: ${packetLoss}%. Pathway integrity verified.`;
+        }
+
+        if (coreStates[3] === 0) {
+          const permutations = (Math.random() * (9.5 - 2.1) + 2.1).toFixed(2);
+          const currentEff = (Math.random() * (98.9 - 94.2) + 94.2).toFixed(1);
+          newCoreState[3] = `[Quantum-Swarm] Evaluating ${permutations}M schedule permutations. Current factory efficiency isolated at ${currentEff}%.`;
+        }
+
+        if (coreStates[4] === 0) {
+          const cottonIndex = (Math.random() * (102.5 - 98.1) + 98.1).toFixed(2);
+          const polyDemand = (Math.random() * (15 - 2) + 2).toFixed(1);
+          newCoreState[4] = `[Maha-Orch] Global Cotton Index: ${cottonIndex} (-0.2%). Poly-blend export demand rising by ${polyDemand}% in European markets.`;
+        }
+
+        if (coreStates[5] === 0) {
+          const latency = (Math.random() * (2.5 - 0.8) + 0.8).toFixed(1);
+          const temp = (Math.random() * (35.5 - 28.0) + 28.0).toFixed(1);
+          newCoreState[5] = `[Edge Node] Zero-latency safety override active. Floor Node 4 latency: ${latency}ms. Ambient server temp: ${temp}°C.`;
+        }
+
+        if (coreStates[6] === 0) {
+          const logs = Math.floor(Math.random() * (450 - 100) + 100);
+          const confidence = (Math.random() * (99.9 - 92.5) + 92.5).toFixed(1);
+          newCoreState[6] = `[NLP Engine] Processing ${logs} rolling Hindi/Mewari voice-logs from shop floor. Transcription confidence: ${confidence}%.`;
+        }
+
+        if (coreStates[7] === 0) {
+          const locksFree = Math.floor(Math.random() * (1024 - 900) + 900);
+          const resolveTime = (Math.random() * (15.5 - 2.1) + 2.1).toFixed(1);
+          newCoreState[7] = `[Conflict Resolver] ${locksFree} Mutex locks available. Last resource contention resolved in ${resolveTime}ms. Zero system-lock detected.`;
+        } // eslint-disable-line no-unused-vars
+
+        return { ...prev, core: newCoreState };
+      });
+    };
+
+    const interval = setInterval(generateDynamicData, 4500); // Update every 4.5 seconds
+    return () => clearInterval(interval);
+  }, [coreStates]);
 
   // --- Owner Approval Polling ---
   const [activeRequests, setActiveRequests] = useState([]);
@@ -145,10 +202,9 @@ import { agentsData } from "../data/agentsData"; export default function Dashboa
                 setMachineHealthState(2);
                 setTicketGenerated(true);
               }
-              if (req._id === activeRequestIds.whatsapp && waStep === 3) {
-                setWaStep(4);
-                setYarnReordered(true);
-                setSystemEvents(p => [{ id: Date.now(), time: new Date().toLocaleTimeString(), msg: `WhatsApp AI: Order Approved by Owner via Terminal.`, type: 'success' }, ...p]);
+              if (req._id === activeRequestIds.whatsapp && waStep === 1) {
+                setWaStep(2);
+                setSystemEvents(p => [{ id: Date.now(), time: new Date().toLocaleTimeString(), msg: `WhatsApp AI: Custom Request Approved by Owner.`, type: 'success' }, ...p]);
               }
               // Handle 52 Agent Library (Core Systems)
               Object.keys(coreRequestIds).forEach(agentId => {
@@ -163,10 +219,9 @@ import { agentsData } from "../data/agentsData"; export default function Dashboa
               if (req._id === activeRequestIds.deadStock && deadStockState === 2) { setDeadStockState(0); setLastAgentMsg(p => ({ ...p, deadStock: "Owner REJECTED the stock liquidation." })); }
               if (req._id === activeRequestIds.solar && solarState === 2) { setSolarState(0); setLastAgentMsg(p => ({ ...p, solar: "Owner REJECTED the energy shift." })); }
               if (req._id === activeRequestIds.mahaparv && mahaparvState === 2) { setMahaparvState(0); setLastAgentMsg(p => ({ ...p, mahaparv: "Owner REJECTED the pattern change." })); }
-              if (req._id === activeRequestIds.whatsapp && waStep === 3) {
-                setWaStep(4);
-                setOwnerReply('no'); // Force rejection UI
-                setSystemEvents(p => [{ id: Date.now(), time: new Date().toLocaleTimeString(), msg: 'WhatsApp AI: Order REJECTED by Owner via Terminal.', type: 'warning' }, ...p]);
+              if (req._id === activeRequestIds.whatsapp && waStep === 1) {
+                setWaStep(3);
+                setSystemEvents(p => [{ id: Date.now(), time: new Date().toLocaleTimeString(), msg: 'WhatsApp AI: Custom Request REJECTED by Owner.', type: 'warning' }, ...p]);
               }
               // Handle 52 Agent Library Rejections
               Object.keys(coreRequestIds).forEach(agentId => {
@@ -184,7 +239,7 @@ import { agentsData } from "../data/agentsData"; export default function Dashboa
     };
 
     const hasPendingCoreState = Object.values(coreStates).some(s => s === 2);
-    if (yarnState === 2 || truckState === 2 || deadStockState === 2 || solarState === 2 || mahaparvState === 2 || waStep === 3 || cottonYarnState === 1 || machineHealthState === 1 || hasPendingCoreState) {
+    if (yarnState === 2 || truckState === 2 || deadStockState === 2 || solarState === 2 || mahaparvState === 2 || waStep === 1 || cottonYarnState === 1 || machineHealthState === 1 || hasPendingCoreState) {
       const interval = setInterval(pollRequests, 3000);
       return () => clearInterval(interval);
     }
@@ -477,6 +532,63 @@ import { agentsData } from "../data/agentsData"; export default function Dashboa
       </div>
     </div>
   );
+
+  useEffect(() => {
+    // Generate contextual suggestions based on live dashboard state
+    const contextualPool = [];
+    const randomPool = [
+      "Approve overtime for Shift B (Weavers)",
+      "Sell 3,000m Navy Blue dead-stock for ₹4.25L",
+      "Reject 1500m Substandard Denim Batch #42",
+      "Re-program Looms 1-3 for Navratri design surge",
+      "Release quarterly bonus for Top 5% Operators",
+      "Request QA audit for incoming Cotton stock",
+      "Shift export focus to European Poly-blend market",
+      "Schedule complete factory deep-clean this Sunday",
+      "Release payment for pending Logistics Invoice #892"
+    ];
+
+    // Priority 1: Machine Health & Maintenance
+    if (machineVibration > 75) {
+      contextualPool.push(`Dispatch Tech-Team to Loom (Vib: ${machineVibration}Hz)`);
+      contextualPool.push("Approve ₹15k emergency parts for Loom Repair");
+    } else if (maintenanceScore < 85) {
+      contextualPool.push("Authorize preventative maintenance on Stenter #2");
+    }
+
+    // Priority 2: Inventory & Supply Chain
+    if (cottonYarnState === 0 || inventoryAlerts.length > 0) {
+      contextualPool.push("Order 500kg Cotton from Sharma Suppliers (Fastest)");
+      contextualPool.push("Expedite 200kg Poly-blend from RJ Textiles");
+    }
+
+    // Priority 3: Energy & Grid
+    const hour = new Date().getHours();
+    if (hour >= 13 && hour <= 15) { // Afternoon peak
+      contextualPool.push("Shift Looms 5-8 to Solar Grid to save power");
+      contextualPool.push("Pre-heat DG Sets for expected 2PM grid cut");
+    }
+
+    // Combine contextual (high priority) with random filler to always have 3-4 suggestions
+    const finalSuggestions = [...contextualPool];
+
+    // Shuffle randompool
+    for (let i = randomPool.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [randomPool[i], randomPool[j]] = [randomPool[j], randomPool[i]];
+    }
+
+    // Fill the rest until we have exactly 3 suggestions
+    let i = 0;
+    while (finalSuggestions.length < 3 && i < randomPool.length) {
+      if (!finalSuggestions.includes(randomPool[i])) {
+        finalSuggestions.push(randomPool[i]);
+      }
+      i++;
+    }
+
+    setWhatsappSuggestions(finalSuggestions.slice(0, 3));
+  }, [machineVibration, cottonYarnState, maintenanceScore, inventoryAlerts]);
 
   return (
     <div className="dashboard-container" style={{ display: 'flex', background: '#070b14', minHeight: '100vh', color: 'white', overflow: 'hidden' }}>
@@ -1177,7 +1289,7 @@ import { agentsData } from "../data/agentsData"; export default function Dashboa
                   <button
                     onClick={async () => {
                       if (!twilioPhone) return alert("Enter a phone number including country code (e.g., +1234567890)");
-                      const msg = "SmartFactory AI Alert: Cotton Yarn stock is critically low (only 2 days remaining). Options: 1) Sharma Suppliers (Cheapest), 2) Bhilwara Cottons (Fastest), 3) RJ Textiles. Reply 1, 2, or 3 to approve order.";
+                      const msg = "SmartFactory AI Alert: I am your AI Factory Assistant. You can now reply to this thread with any custom request or approval, and I will route it to the Owner Terminal.";
                       try {
                         const res = await fetch('http://localhost:5000/api/whatsapp/send', {
                           method: 'POST',
@@ -1204,129 +1316,95 @@ import { agentsData } from "../data/agentsData"; export default function Dashboa
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', background: '#0b141a', padding: '1.5rem', borderRadius: '16px', backgroundImage: 'url("https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png")', backgroundSize: 'cover', backgroundBlendMode: 'overlay', border: '1px solid rgba(255,255,255,0.05)' }}>
 
-                {/* Message 1: AI Alert */}
+                {/* Message 1: AI General Prompt */}
                 <div style={{ alignSelf: 'flex-start', background: '#202c33', padding: '10px 14px', borderRadius: '0 8px 8px 8px', maxWidth: '80%', boxShadow: '0 1px 2px rgba(0,0,0,0.3)' }}>
-                  <div style={{ fontSize: '0.75rem', color: '#25D366', fontWeight: 'bold', marginBottom: '4px' }}>SmartFactory AI</div>
+                  <div style={{ fontSize: '0.75rem', color: '#25D366', fontWeight: 'bold', marginBottom: '4px' }}>Maha-Connect AI</div>
                   <div style={{ fontSize: '0.9rem', color: '#e9edef', lineHeight: '1.4' }}>
-                    "Alert: Cotton Yarn stock is critically low (only 2 days remaining).<br /><br />
-                    I've scanned local Bhilwara suppliers for 500kg:<br />
-                    1. Sharma Suppliers (Cheapest)<br />
-                    2. Bhilwara Cottons (Fastest Delivery)<br />
-                    3. RJ Textiles<br /><br />
-                    Shall I send an auto-reorder to the cheapest option (Sharma Suppliers)?"
+                    Welcome to Maha-Connect. I am your SmartFactory AI Assistant. <br /><br />
+                    Type your custom request for the Owner Terminal below, or tap an AI suggestion pill to draft instantly.
                   </div>
                   <div style={{ fontSize: '0.65rem', color: '#8696a0', textAlign: 'right', marginTop: '4px' }}>{new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
                 </div>
 
-                {/* Message 2: Owner Reply (Typing or Sent) */}
+                {/* Message 2: Exact User Request */}
                 {waStep >= 1 && (
                   <div style={{ alignSelf: 'flex-end', background: '#005c4b', padding: '10px 14px', borderRadius: '8px 0 8px 8px', maxWidth: '80%', boxShadow: '0 1px 2px rgba(0,0,0,0.3)', marginTop: '8px' }}>
-                    <div style={{ fontSize: '0.9rem', color: '#e9edef', lineHeight: '1.4', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      {waStep === 1 ? (
-                        <div style={{ display: 'flex', gap: '4px', alignItems: 'center', height: '20px' }}>
-                          <span className="typing-dot" style={{ width: '6px', height: '6px', background: '#e9edef', borderRadius: '50%', animation: 'typing 1.4s infinite ease-in-out' }}></span>
-                          <span className="typing-dot" style={{ width: '6px', height: '6px', background: '#e9edef', borderRadius: '50%', animation: 'typing 1.4s infinite ease-in-out 0.2s' }}></span>
-                          <span className="typing-dot" style={{ width: '6px', height: '6px', background: '#e9edef', borderRadius: '50%', animation: 'typing 1.4s infinite ease-in-out 0.4s' }}></span>
-                        </div>
-                      ) : (
-                        ownerReply || "Yes"
-                      )}
+                    <div style={{ fontSize: '0.9rem', color: '#e9edef', lineHeight: '1.4' }}>
+                      {ownerReply}
                     </div>
-                    {waStep >= 2 && <div style={{ fontSize: '0.65rem', color: '#8696a0', textAlign: 'right', marginTop: '4px' }}>{new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} <span style={{ color: '#53bdeb', marginLeft: '2px' }}>✓✓</span></div>}
+                    <div style={{ fontSize: '0.65rem', color: '#8696a0', textAlign: 'right', marginTop: '4px' }}>{new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} <span style={{ color: '#53bdeb', marginLeft: '2px' }}>✓✓</span></div>
                   </div>
                 )}
 
-                {/* Message 3: AI Confirmation or Abort */}
-                {waStep >= 3 && (
+                {/* Message 3: AI Status Update */}
+                {waStep >= 1 && (
                   <div style={{ alignSelf: 'flex-start', background: '#202c33', padding: '10px 14px', borderRadius: '0 8px 8px 8px', maxWidth: '80%', boxShadow: '0 1px 2px rgba(0,0,0,0.3)', marginTop: '8px' }}>
-                    <div style={{ fontSize: '0.75rem', color: '#25D366', fontWeight: 'bold', marginBottom: '4px' }}>SmartFactory AI</div>
+                    <div style={{ fontSize: '0.75rem', color: '#25D366', fontWeight: 'bold', marginBottom: '4px' }}>Maha-Connect AI</div>
                     <div style={{ fontSize: '0.9rem', color: '#e9edef', lineHeight: '1.4' }}>
-                      {waStep === 3 ? (
+                      {waStep === 1 ? (
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                           <div className="pulse" style={{ width: '8px', height: '8px', background: '#25D366', borderRadius: '50%' }}></div>
-                          Waiting for Owner Approval via Port 3000...
+                          Request sent to Owner Terminal. Waiting for approval...
                         </div>
+                      ) : waStep === 2 ? (
+                        <div style={{ color: '#10b981', fontWeight: 'bold' }}>Request Approved by Owner ✅</div>
                       ) : (
-                        ownerReply.toLowerCase() === 'no'
-                          ? "Understood. The order has been canceled. I will remind you again tomorrow if stock drops further."
-                          : `Thank you! Order has been sent to ${selectedSupplier || 'Sharma Suppliers'}, Bhilwara. ERP system updated. ✅`
+                        <div style={{ color: '#ef4444', fontWeight: 'bold' }}>Request Rejected by Owner ❌</div>
                       )}
                     </div>
-                    {waStep === 4 && <div style={{ fontSize: '0.65rem', color: '#8696a0', textAlign: 'right', marginTop: '4px' }}>{new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>}
+                    {waStep >= 2 && <div style={{ fontSize: '0.65rem', color: '#8696a0', textAlign: 'right', marginTop: '4px' }}>{new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>}
                   </div>
                 )}
-
               </div>
 
+              {/* Input Area with Suggestions */}
               {waStep === 0 && (
-                <div style={{ display: 'flex', gap: '8px', marginTop: '1.5rem', background: '#0b141a', padding: '10px', borderRadius: '24px', border: '1px solid rgba(255,255,255,0.1)', alignItems: 'center' }}>
-                  <input
-                    type="text"
-                    placeholder="Type supplier number (e.g. 1) or 'No'..."
-                    value={ownerReply}
-                    onChange={(e) => setOwnerReply(e.target.value)}
-                    onKeyDown={(e) => {
-                      const lowerReply = ownerReply.toLowerCase().trim();
-                      const isValidAction = ['1', '2', '3', 'yes', 'no'].includes(lowerReply);
+                <div style={{ marginTop: '1rem' }}>
+                  {/* AI Suggestions Row */}
+                  <div style={{ display: 'flex', gap: '8px', marginBottom: '8px', flexWrap: 'wrap' }}>
+                    {whatsappSuggestions.map(sugg => (
+                      <button
+                        key={sugg}
+                        onClick={() => setOwnerReply(sugg)}
+                        style={{ background: 'rgba(37, 211, 102, 0.1)', border: '1px solid rgba(37, 211, 102, 0.3)', color: '#25D366', borderRadius: '12px', padding: '6px 12px', fontSize: '0.75rem', cursor: 'pointer', transition: 'all 0.2s', whiteSpace: 'nowrap' }}
+                        onMouseOver={(e) => { e.currentTarget.style.background = 'rgba(37, 211, 102, 0.2)'; }}
+                        onMouseOut={(e) => { e.currentTarget.style.background = 'rgba(37, 211, 102, 0.1)'; }}
+                      >
+                        {sugg}
+                      </button>
+                    ))}
+                  </div>
 
-                      if (e.key === 'Enter' && isValidAction) {
-                        let supplierName = 'Sharma Suppliers (Cheapest)';
-                        if (lowerReply === '2') supplierName = 'Bhilwara Cottons (Fastest)';
-                        if (lowerReply === '3') supplierName = 'RJ Textiles';
-
-                        setSelectedSupplier(supplierName);
-                        setWaStep(1); // Start sequence
-                        setTimeout(() => {
-                          setWaStep(2); // Sent user bubble
-                          if (lowerReply !== 'no') {
-                            setTimeout(async () => {
-                              setWaStep(3); // Wait for REAL owner
-                              const req = await triggerOwnerRequest('WhatsAppAI', 'WhatsApp Reorder', `Approve bulk reorder of 500kg Yarn from ${supplierName}.`);
-                              if (req?._id) setActiveRequestIds(prev => ({ ...prev, whatsapp: req._id }));
-                            }, 800);
-                          } else {
-                            setTimeout(() => {
-                              setWaStep(4); // Local cancel
-                              setSystemEvents(prev => [{ id: Date.now(), time: new Date().toLocaleTimeString(), msg: 'WhatsApp AI: Order Canceled locally.', type: 'warning' }, ...prev]);
-                            }, 800);
-                          }
-                        }, 1000);
-                      }
-                    }}
-                    style={{ flex: 1, background: '#2a3942', border: 'none', color: '#d1d7db', padding: '12px 16px', borderRadius: '20px', fontSize: '0.95rem', outline: 'none' }}
-                  />
-                  <button
-                    style={{ background: '#00a884', color: '#111b21', border: 'none', borderRadius: '50%', width: '40px', height: '40px', display: 'flex', justifyContent: 'center', alignItems: 'center', cursor: ['1', '2', '3', 'yes', 'no'].includes(ownerReply.toLowerCase().trim()) ? 'pointer' : 'not-allowed', opacity: ['1', '2', '3', 'yes', 'no'].includes(ownerReply.toLowerCase().trim()) ? 1 : 0.5, transition: '0.2s' }}
-                    disabled={!['1', '2', '3', 'yes', 'no'].includes(ownerReply.toLowerCase().trim())}
-                    onClick={() => {
-                      const lowerReply = ownerReply.toLowerCase().trim();
-                      let supplierName = 'Sharma Suppliers (Cheapest)';
-                      if (lowerReply === '2') supplierName = 'Bhilwara Cottons (Fastest)';
-                      if (lowerReply === '3') supplierName = 'RJ Textiles';
-
-                      setSelectedSupplier(supplierName);
-                      setWaStep(1); // Start sequence
-                      setTimeout(() => {
-                        setWaStep(2); // Sent user bubble
-                        if (lowerReply !== 'no') {
-                          setTimeout(async () => {
-                            setWaStep(3); // Wait for REAL owner
-                            const req = await triggerOwnerRequest('WhatsAppAI', 'WhatsApp Reorder', `Approve bulk reorder of 500kg Yarn from ${supplierName}.`);
-                            if (req?._id) setActiveRequestIds(prev => ({ ...prev, whatsapp: req._id }));
-                          }, 800);
-                        } else {
-                          setTimeout(() => {
-                            setWaStep(4); // Local cancel
-                            setSystemEvents(prev => [{ id: Date.now(), time: new Date().toLocaleTimeString(), msg: 'WhatsApp AI: Order Canceled locally.', type: 'warning' }, ...prev]);
-                          }, 800);
+                  {/* Text Input Row */}
+                  <div style={{ display: 'flex', gap: '8px', background: '#0b141a', padding: '10px', borderRadius: '24px', border: '1px solid rgba(255,255,255,0.1)', alignItems: 'center' }}>
+                    <input
+                      type="text"
+                      placeholder="Type a custom request for the Owner..."
+                      value={ownerReply}
+                      onChange={(e) => setOwnerReply(e.target.value)}
+                      onKeyDown={async (e) => {
+                        if (e.key === 'Enter' && ownerReply.trim().length > 0) {
+                          setWaStep(1); // Set to waiting status immediately
+                          const req = await triggerOwnerRequest('WhatsAppAI', 'Custom Request', ownerReply.trim());
+                          if (req?._id) setActiveRequestIds(prev => ({ ...prev, whatsapp: req._id }));
                         }
-                      }, 1000);
-                    }}
-                  >
-                    <svg viewBox="0 0 24 24" height="20" width="20" preserveAspectRatio="xMidYMid meet" fill="currentColor">
-                      <path d="M1.101,21.757L23.8,12.028L1.101,2.3l0.011,7.912l13.623,1.816L1.112,13.845 L1.101,21.757z"></path>
-                    </svg>
-                  </button>
+                      }}
+                      style={{ flex: 1, background: '#2a3942', border: 'none', color: '#d1d7db', padding: '12px 16px', borderRadius: '20px', fontSize: '0.95rem', outline: 'none' }}
+                    />
+                    <button
+                      style={{ background: '#00a884', color: '#111b21', border: 'none', borderRadius: '50%', width: '40px', height: '40px', display: 'flex', justifyContent: 'center', alignItems: 'center', cursor: ownerReply.trim().length > 0 ? 'pointer' : 'not-allowed', opacity: ownerReply.trim().length > 0 ? 1 : 0.5, transition: '0.2s' }}
+                      disabled={ownerReply.trim().length === 0}
+                      onClick={async () => {
+                        setWaStep(1); // Set to waiting status immediately
+                        const req = await triggerOwnerRequest('WhatsAppAI', 'Custom Request', ownerReply.trim());
+                        if (req?._id) setActiveRequestIds(prev => ({ ...prev, whatsapp: req._id }));
+                      }}
+                    >
+                      <svg viewBox="0 0 24 24" height="20" width="20" preserveAspectRatio="xMidYMid meet" fill="currentColor">
+                        <path d="M1.101,21.757L23.8,12.028L1.101,2.3l0.011,7.912l13.623,1.816L1.112,13.845 L1.101,21.757z"></path>
+                      </svg>
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
