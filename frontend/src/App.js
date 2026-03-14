@@ -29,6 +29,11 @@ function App() {
         } />
         <Route path="/entry" element={<DataEntry />} />
         <Route path="/owner" element={<OwnerPortal />} />
+        <Route path="/govassist" element={
+          <ErrorBoundary>
+            <Dashboard defaultTab="govassist" />
+          </ErrorBoundary>
+        } />
       </Routes>
     </Router>
   );
