@@ -588,7 +588,7 @@ export default function Dashboard({ defaultTab = 'overview' }) {
   // Interactive Machine Slider State
   const [machineVibration, setMachineVibration] = useState(45);
   const [ticketGenerated, setTicketGenerated] = useState(false);
-  const [userRole, setUserRole] = useState('Strategic Owner'); // Operator, Manager, Strategic Owner
+  const [userRole, setUserRole] = useState(localStorage.getItem('userRole') || 'Strategic Owner'); // Operator, Manager, Strategic Owner
   const [showRoleSwitcher, setShowRoleSwitcher] = useState(false);
   const [isAiLearningMode, setIsAiLearningMode] = useState(true);
   const [lang, setLang] = useState('EN'); // EN, HI
@@ -1267,67 +1267,8 @@ export default function Dashboard({ defaultTab = 'overview' }) {
           </div>
         </div>
 
-        {/* --- Role Switcher (Photo 2) --- */}
         <div style={{ padding: '0 1rem 1.5rem 1rem', position: 'relative' }}>
-          <div
-            className="role-switcher-trigger"
-            onClick={() => setShowRoleSwitcher(!showRoleSwitcher)}
-            style={{
-              background: 'rgba(255,255,255,0.05)',
-              border: '1px solid rgba(255,255,255,0.1)',
-              padding: '10px 15px',
-              borderRadius: '12px',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              cursor: 'pointer',
-              fontSize: '0.75rem',
-              fontWeight: '700',
-              color: 'var(--accent)'
-            }}
-          >
-            {userRole.toUpperCase()} VIEW
-            <TrendingUp size={14} style={{ transform: showRoleSwitcher ? 'rotate(180deg)' : 'none', transition: '0.3s' }} />
-          </div>
-
-          {showRoleSwitcher && (
-            <div className="role-dropdown animate-fade-in" style={{
-              position: 'absolute',
-              top: '100%',
-              left: '1rem',
-              right: '1rem',
-              background: '#0f172a',
-              border: '1px solid rgba(255,255,255,0.1)',
-              borderRadius: '12px',
-              zIndex: 100,
-              overflow: 'hidden',
-              boxShadow: '0 10px 25px rgba(0,0,0,0.5)',
-              marginTop: '5px'
-            }}>
-              {['Operator', 'Manager', 'Strategic Owner'].map(role => (
-                <div
-                  key={role}
-                  className="role-option"
-                  onClick={() => {
-                    setUserRole(role);
-                    if (role === 'Operator') setActiveTab('overview');
-                    setShowRoleSwitcher(false);
-                  }}
-                  style={{
-                    padding: '12px 15px',
-                    fontSize: '0.7rem',
-                    fontWeight: '800',
-                    color: userRole === role ? 'white' : 'rgba(255,255,255,0.6)',
-                    background: userRole === role ? 'var(--primary)' : 'transparent',
-                    cursor: 'pointer',
-                    textTransform: 'uppercase'
-                  }}
-                >
-                  {role} VIEW
-                </div>
-              ))}
-            </div>
-          )}
+          <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', marginBottom: '4px', fontWeight: '800', letterSpacing: '1px' }}>SESSION ACTIVE</div>
         </div>
         <ul className="nav-links">
           <li className={`sidebar-link ${activeTab === 'overview' ? 'active' : ''}`} onClick={() => setActiveTab('overview')}>
@@ -1419,18 +1360,7 @@ export default function Dashboard({ defaultTab = 'overview' }) {
         </ul>
 
         <div className="sidebar-footer" style={{ padding: '1.5rem', borderTop: '1px solid var(--border)', marginTop: 'auto' }}>
-          <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', marginBottom: '1rem', fontWeight: '800', letterSpacing: '1px' }}>SYSTEM ACCESS</div>
-
-          <select
-            value={userRole}
-            onChange={(e) => setUserRole(e.target.value)}
-            style={{ width: '100%', background: 'rgba(0,0,0,0.2)', color: 'white', border: '1px solid var(--border)', padding: '10px', borderRadius: '8px', fontSize: '0.75rem', marginBottom: '1rem', cursor: 'pointer' }}
-          >
-            <option value="Operator"> OPERATOR VIEW</option>
-            <option value="Manager"> MANAGER VIEW</option>
-            <option value="Owner"> STRATEGIC OWNER</option>
-          </select>
-
+          <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', marginBottom: '1rem', fontWeight: '800', letterSpacing: '1px' }}>SESSION ACTIVE</div>
         </div>
       </nav>
 
