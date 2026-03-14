@@ -59,6 +59,11 @@
     to { transform: scale(1); opacity: 1; }
 }
 
+@keyframes scanLine {
+  0% { top: 0; }
+  100% { top: 100%; }
+}
+
 .animate-scale-up {
     animation: scaleUp 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }

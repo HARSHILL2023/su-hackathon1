@@ -6,9 +6,7 @@ const userSchema = new mongoose.Schema({
   password: String,
   role: { type: String, enum: ['Operator', 'Manager', 'Strategic Owner'], default: "Strategic Owner" },
   otp: String,
-  otpExpires: Date,
-  securityQuestion: String,
-  securityAnswer: String
+  otpExpires: Date
 });
 
 module.exports = mongoose.model("User", userSchema);

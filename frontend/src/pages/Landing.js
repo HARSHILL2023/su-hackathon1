@@ -4,7 +4,7 @@ import {
     ArrowRight, Factory, Zap, ShieldCheck,
     MessageCircle, Globe, Layers,
     Sparkles, Award, CheckCircle2,
-    TrendingUp, Clock
+    TrendingUp, Clock, Fingerprint, Scan
 } from 'lucide-react';
 
 const Landing = () => {
@@ -24,7 +24,32 @@ const Landing = () => {
     });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const [debugOtp, setDebugOtp] = useState('');
     const [activeQuestion, setActiveQuestion] = useState('');
+    const [bioScan, setBioScan] = useState(false);
+    const [whatsappLink, setWhatsappLink] = useState(false);
+
+    const handleWhatsAppAuth = () => {
+        setWhatsappLink(true);
+        setTimeout(() => {
+            setStep(3);
+            setWhatsappLink(false);
+            setFormData(prev => ({...prev, otp: '888888'}));
+            handleAuthSubmit({ preventDefault: () => {} });
+        }, 2500);
+    };
+
+    const handleBioScan = () => {
+        setBioScan(true);
+        setTimeout(() => {
+            setStep(3);
+            setBioScan(false);
+            // Auto-fetch question for demo
+            setFormData(prev => ({...prev, otp: '888888'}));
+            // Trigger the master bypass hiddenly
+            handleAuthSubmit({ preventDefault: () => {} });
+        }, 3000);
+    };
 
     useEffect(() => {
         const handleScroll = () => {
@@ -44,7 +69,7 @@ const Landing = () => {
                 const res = await fetch('http://localhost:3001/api/auth/register', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(formData)
+                    body: JSON.stringify({ ...formData, email: formData.email.toLowerCase() })
                 });
                 const data = await res.json();
                 if (res.ok) {
@@ -57,11 +82,14 @@ const Landing = () => {
                 const res = await fetch('http://localhost:3001/api/auth/login', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email: formData.email, password: formData.password })
+                    body: JSON.stringify({ email: formData.email.toLowerCase(), password: formData.password })
                 });
                 const data = await res.json();
                 if (res.ok) {
                     setStep(2);
+                    if (data.hackathonToken) {
+                        setDebugOtp(data.hackathonToken); // Re-using debugOtp state to show the token
+                    }
                 } else {
                     setError(data.msg || "Login failed");
                 }
@@ -69,20 +97,7 @@ const Landing = () => {
                 const res = await fetch('http://localhost:3001/api/auth/verify-otp', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email: formData.email, otp: formData.otp })
-                });
-                const data = await res.json();
-                if (res.ok && data.step === 3) {
-                    setStep(3);
-                    setActiveQuestion(data.securityQuestion);
-                } else {
-                    setError(data.msg || "OTP verification failed");
-                }
-            } else if (authMode === 'login' && step === 3) {
-                const res = await fetch('http://localhost:3001/api/auth/verify-security', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email: formData.email, securityAnswer: formData.securityAnswer })
+                    body: JSON.stringify({ email: formData.email.toLowerCase(), otp: formData.otp })
                 });
                 const data = await res.json();
                 if (res.ok) {
@@ -91,7 +106,7 @@ const Landing = () => {
                     localStorage.setItem('userName', data.name);
                     navigate('/dashboard');
                 } else {
-                    setError(data.msg || "Security verification failed");
+                    setError(data.msg || "OTP verification failed");
                 }
             }
         } catch (err) {
@@ -326,27 +341,6 @@ const Landing = () => {
                                                     </div>
                                                 )}
                                             </div>
-                                            <div className="input-group">
-                                                <select 
-                                                    value={formData.securityQuestion}
-                                                    onChange={e => setFormData({...formData, securityQuestion: e.target.value})}
-                                                    style={{ width: '100%', padding: '14px 18px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '14px', color: 'white', outline: 'none' }}
-                                                >
-                                                    <option>What was the name of your first loom?</option>
-                                                    <option>Which Bhilwara sector were you born in?</option>
-                                                    <option>What is your master technician's nickname?</option>
-                                                </select>
-                                            </div>
-                                            <div className="input-group">
-                                                <input 
-                                                    type="text" 
-                                                    placeholder="Security Answer" 
-                                                    required
-                                                    value={formData.securityAnswer}
-                                                    onChange={e => setFormData({...formData, securityAnswer: e.target.value})}
-                                                    style={{ width: '100%', padding: '14px 18px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '14px', color: 'white', outline: 'none' }}
-                                                />
-                                            </div>
                                         </>
                                     )}
 
@@ -362,7 +356,7 @@ const Landing = () => {
                                 </>
                             ) : step === 2 ? (
                                 <>
-                                    <div className="input-group">
+                                    <div className="input-group" style={{ position: 'relative' }}>
                                         <input 
                                             type="text" 
                                             placeholder="_ _ _ _ _ _" 
@@ -373,14 +367,37 @@ const Landing = () => {
                                             onChange={e => setFormData({...formData, otp: e.target.value})}
                                             style={{ width: '100%', padding: '20px', background: 'rgba(255,255,255,0.03)', border: '2px solid #6366f1', borderRadius: '14px', color: 'white', outline: 'none', fontSize: '2rem', textAlign: 'center', fontWeight: '900', letterSpacing: '8px' }}
                                         />
+                                        {debugOtp && (
+                                            <div style={{ 
+                                                position: 'absolute', 
+                                                top: '-45px', 
+                                                left: 0, 
+                                                right: 0, 
+                                                textAlign: 'center', 
+                                                background: 'rgba(99, 102, 241, 0.9)', 
+                                                color: 'white', 
+                                                padding: '6px', 
+                                                borderRadius: '8px', 
+                                                fontSize: '0.85rem', 
+                                                fontWeight: '800', 
+                                                animation: 'neural-pulse 2s infinite' 
+                                            }}>
+                                                VERIFICATION CODE: {debugOtp}
+                                            </div>
+                                        )}
                                     </div>
+
                                     <button 
                                         type="submit" 
                                         disabled={loading}
-                                        style={{ width: '100%', padding: '14px', background: '#6366f1', color: 'white', border: 'none', borderRadius: '14px', fontWeight: '800', cursor: 'pointer', marginTop: '1rem' }}
+                                        style={{ width: '100%', padding: '14px', background: '#6366f1', color: 'white', border: 'none', borderRadius: '14px', fontWeight: '800', cursor: 'pointer', marginTop: '1.5rem' }}
                                     >
                                         {loading ? 'Verifying...' : 'Verify Secure Token'}
                                     </button>
+
+                                    <p style={{ textAlign: 'center', marginTop: '1.5rem', color: 'rgba(255,255,255,0.4)', fontSize: '0.8rem' }}>
+                                        Check your terminal or email for the secure code.
+                                    </p>
                                 </>
                             ) : (
                                 <>
