@@ -2745,44 +2745,35 @@ export default function Dashboard() {
                 {userRole === 'Strategic Owner' ? (
                   <>
                     {/* OWNER VIEW: Financial Metrics */}
+                    {/* STRATEGIC OWNER VIEW (Admin): Financial Metrics */}
                     <div className="premium-card" style={{ padding: '1.5rem', borderBottom: '3px solid #84B179' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
                         <div className="glass-icon"><DollarSign size={24} color="#84B179" /></div>
-                        <div className="badge badge-success">Strategy Active</div>
+                        <div className="badge badge-success">Asset Protection</div>
                       </div>
-                      <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '4px' }}>Portfolio Asset Depreciation</div>
+                      <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '4px' }}>Machine Depreciation Index</div>
                       <div style={{ fontSize: '2.2rem', fontWeight: '900' }}>{strategicPdM.totalDepreciation}</div>
-                      <div style={{ marginTop: '15px', fontSize: '0.8rem', color: 'var(--text-muted)' }}>Factory-wide asset value leakage control</div>
+                      <div style={{ marginTop: '15px', fontSize: '0.8rem', color: 'var(--text-muted)' }}>Net asset value loss across Loom fleet</div>
                     </div>
 
                     <div className="premium-card" style={{ padding: '1.5rem', borderBottom: '3px solid #F43F5E' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
                         <div className="glass-icon" style={{ background: 'rgba(244, 63, 94, 0.1)' }}><Zap size={24} color="#F43F5E" /></div>
-                        <div className="badge badge-danger">High Risk</div>
+                        <div className="badge badge-danger">Critical Risk</div>
                       </div>
-                      <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '4px' }}>Revenue-at-Risk Forecast</div>
+                      <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '4px' }}>At-Risk Capital Forecast</div>
                       <div style={{ fontSize: '2.2rem', fontWeight: '900', color: '#F43F5E' }}>{strategicPdM.revenueAtRisk}</div>
-                      <div style={{ marginTop: '15px', fontSize: '0.8rem', color: 'rgba(244, 63, 94, 0.8)', fontWeight: 'bold' }}>Unplanned downtime threat detected</div>
+                      <div style={{ marginTop: '15px', fontSize: '0.8rem', color: 'rgba(244, 63, 94, 0.8)', fontWeight: 'bold' }}>Unplanned downtime threat to revenue</div>
                     </div>
 
                     <div className="premium-card" style={{ padding: '1.5rem', borderBottom: '3px solid var(--accent)' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
                         <div className="glass-icon" style={{ background: 'rgba(162, 203, 139, 0.1)' }}><TrendingUp size={24} color="var(--accent)" /></div>
-                        <div className="badge" style={{ background: 'rgba(162, 203, 139, 0.1)', color: 'var(--accent)' }}>+14.2% ROI</div>
+                        <div className="badge" style={{ background: 'rgba(162, 203, 139, 0.1)', color: 'var(--accent)' }}>+ROI Optimization</div>
                       </div>
-                      <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '4px' }}>Net EBITDA Recovery Gain</div>
+                      <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '4px' }}>Net Profit Gain from PdM</div>
                       <div style={{ fontSize: '2.2rem', fontWeight: '900' }}>{strategicPdM.netEbitdaImpact}</div>
-                      <div style={{ marginTop: '15px', fontSize: '0.8rem', color: 'var(--text-muted)' }}>Profit gained via PdM interventions</div>
-                    </div>
-
-                    <div className="premium-card" style={{ padding: '1.5rem', borderBottom: '3px solid var(--primary)' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
-                        <div className="glass-icon" style={{ background: 'rgba(99, 102, 241, 0.1)' }}><Award size={24} color="var(--primary)" /></div>
-                        <div className="badge" style={{ background: 'rgba(99, 102, 241, 0.1)', color: 'var(--primary)' }}>Mastery</div>
-                      </div>
-                      <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '4px' }}>Portfolio Health Index</div>
-                      <div style={{ fontSize: '2.2rem', fontWeight: '900' }}>{strategicPdM.portfolioHealth}%</div>
-                      <div className="maturity-bar-bg"><div className="maturity-bar-fill" style={{ width: `${strategicPdM.portfolioHealth}%`, background: 'var(--primary)' }}></div></div>
+                      <div style={{ marginTop: '15px', fontSize: '0.8rem', color: 'var(--text-muted)' }}>Additional profit secured via AI overrides</div>
                     </div>
                   </>
                 ) : (
@@ -2827,13 +2818,13 @@ export default function Dashboard() {
 
                     <div className="premium-card" style={{ padding: '1.5rem', borderBottom: '3px solid var(--primary)' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
-                        <div className="glass-icon"><Users size={24} color="var(--primary)" /></div>
-                        <div className="badge" style={{ background: 'rgba(99, 102, 241, 0.1)', color: 'var(--primary)' }}>Active</div>
+                        <div className="glass-icon"><Briefcase size={24} color="var(--primary)" /></div>
+                        <div className="badge" style={{ background: 'rgba(99, 102, 241, 0.1)', color: 'var(--primary)' }}>Critical Priority</div>
                       </div>
-                      <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '4px' }}>Tech Team Availability</div>
-                      <div style={{ fontSize: '2.2rem', fontWeight: '900' }}>{advancedPdM.techAvailability}</div>
+                      <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '4px' }}>Technical Backlog Depth</div>
+                      <div style={{ fontSize: '2.2rem', fontWeight: '900' }}>{advancedPdM.backlogItems} <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Units</span></div>
                       <div style={{ marginTop: '15px', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                        {advancedPdM.backlogItems} pending work orders
+                         High-latency maintenance queue items
                       </div>
                     </div>
                   </>
@@ -2906,7 +2897,131 @@ export default function Dashboard() {
 
               {userRole !== 'Operator' && (
                 <>
-                  {/* 4. Failure Prediction & Smart Recommendations (Role-Differentiated) */}
+                  {/* 4. Failure Report Hub (Machine Comparison & Role-Specific Audits) */}
+                  <div className="premium-card" style={{ padding: '2.5rem', marginBottom: '2rem', background: 'rgba(0,0,0,0.2)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+                      <div>
+                        <h3 className="section-title" style={{ fontSize: '1.4rem' }}><FileScan size={24} color="var(--primary)" /> Failure Analysis & Strategic Report Hub</h3>
+                        <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', margin: '4px 0 0 0' }}>Compare machine failure metrics and authorize role-specific interventions.</p>
+                      </div>
+                      <div className="badge badge-success" style={{ padding: '8px 15px' }}>Data Integrity: 100%</div>
+                    </div>
+
+                    <div style={{ display: 'grid', gridTemplateColumns: '300px 1fr', gap: '2rem' }}>
+                      {/* Machine Selector Sidebar */}
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                        {['Loom #1', 'Loom #7', 'Loom #4'].map(machine => (
+                          <div
+                            key={machine}
+                            onClick={() => setSelectedMachineReport(machine)}
+                            className={`ecosystem-item ${selectedMachineReport === machine ? 'active' : ''}`}
+                            style={{
+                              padding: '1.2rem',
+                              cursor: 'pointer',
+                              border: selectedMachineReport === machine ? '2px solid var(--primary)' : '1px solid rgba(255,255,255,0.05)',
+                              background: selectedMachineReport === machine ? 'rgba(99, 102, 241, 0.05)' : 'rgba(255,255,255,0.01)',
+                              borderRadius: '15px',
+                              transition: 'all 0.3s'
+                            }}
+                          >
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                              <span style={{ fontWeight: '900', fontSize: '1rem' }}>{machine}</span>
+                              <div className="node-dot" style={{ background: fleetData.find(f => f.name === machine)?.color || '#fff' }}></div>
+                            </div>
+                            <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginTop: '4px' }}>
+                              Status: <span style={{ color: fleetData.find(f => f.name === machine)?.color }}>{fleetData.find(f => f.name === machine)?.status}</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Dynamic Report Content */}
+                      <div className="premium-card" style={{ padding: '2rem', border: '1px solid rgba(255,255,255,0.05)', position: 'relative', minHeight: '400px' }}>
+                        {!selectedMachineReport ? (
+                          <div style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}>
+                            <History size={48} color="rgba(255,255,255,0.1)" />
+                            <div style={{ marginTop: '1rem', color: 'var(--text-muted)' }}>Select a machine to generate <br /> <b>{userRole === 'Strategic Owner' ? 'Financial Industry Report' : 'Technical Diagnostics Audit'}</b></div>
+                          </div>
+                        ) : (
+                          <div className="animate-fade-in">
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '1rem' }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                <div className="glass-icon"><Bot size={20} color="var(--primary)" /></div>
+                                <h4 style={{ margin: 0, fontSize: '1.1rem', fontWeight: '900' }}>{selectedMachineReport} - AI Failure Analysis</h4>
+                              </div>
+                              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Last Audit Trace: {failureReports[selectedMachineReport].lastResolved}</div>
+                            </div>
+
+                            {userRole === 'Strategic Owner' ? (
+                              /* ADMIN / STRATEGIC OWNER: FINANCIAL AUDIT */
+                              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
+                                <div>
+                                  <h5 style={{ color: 'var(--primary)', textTransform: 'uppercase', fontSize: '0.7rem', letterSpacing: '2px', marginBottom: '1rem' }}>Financial Impact Audit</h5>
+                                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                                    <div>
+                                      <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Total Cost of Failure (Projected)</div>
+                                      <div style={{ fontSize: '1.8rem', fontWeight: '900', color: '#f43f5e' }}>{failureReports[selectedMachineReport].costOfFailure}</div>
+                                    </div>
+                                    <div>
+                                      <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Accelerated Depreciation Impact</div>
+                                      <div style={{ fontSize: '1.8rem', fontWeight: '900', color: 'var(--warning)' }}>{failureReports[selectedMachineReport].depreciation}</div>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div style={{ borderLeft: '1px solid rgba(255,255,255,0.05)', paddingLeft: '2rem' }}>
+                                  <h5 style={{ color: '#A2CB8B', textTransform: 'uppercase', fontSize: '0.7rem', letterSpacing: '2px', marginBottom: '1rem' }}>Recovery & Profitability</h5>
+                                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                                    <div style={{ background: 'rgba(162, 203, 139, 0.05)', padding: '1rem', borderRadius: '12px', borderLeft: '3px solid #A2CB8B' }}>
+                                      <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Potential Cost Recovered</div>
+                                      <div style={{ fontSize: '1.8rem', fontWeight: '900', color: '#A2CB8B' }}>{failureReports[selectedMachineReport].costRecover}</div>
+                                    </div>
+                                    <div>
+                                      <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Net Profit Secured (EBITDA)</div>
+                                      <div style={{ fontSize: '1.8rem', fontWeight: '900', color: '#fff' }}>{failureReports[selectedMachineReport].profitGain}</div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            ) : (
+                              /* MANAGER: TECHNICAL DIAGNOSTICS & SOLUTIONS */
+                              <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '2rem' }}>
+                                <div>
+                                  <h5 style={{ color: 'var(--primary)', textTransform: 'uppercase', fontSize: '0.7rem', letterSpacing: '2px', marginBottom: '1rem' }}>Technical Diagnostics Root Cause</h5>
+                                  <p style={{ fontSize: '1rem', lineHeight: '1.6', color: '#fff', background: 'rgba(255,255,255,0.03)', padding: '1.5rem', borderRadius: '15px', border: '1px solid rgba(99, 102, 241, 0.1)' }}>
+                                    {failureReports[selectedMachineReport].analysis}
+                                  </p>
+                                  <div style={{ marginTop: '1.5rem', display: 'flex', gap: '10px' }}>
+                                    <div className="badge" style={{ background: 'rgba(244, 63, 94, 0.1)', color: '#f43f5e' }}>Vibration Spike: 8.2kHz</div>
+                                    <div className="badge" style={{ background: 'rgba(244, 63, 94, 0.1)', color: '#f43f5e' }}>Thermal Drift: +12%</div>
+                                  </div>
+                                </div>
+                                <div style={{ background: 'rgba(162, 203, 139, 0.03)', padding: '1.5rem', borderRadius: '20px', border: '1px solid rgba(162, 203, 139, 0.1)' }}>
+                                  <h5 style={{ color: '#A2CB8B', textTransform: 'uppercase', fontSize: '0.7rem', letterSpacing: '2px', marginBottom: '1.2rem' }}>AI Prescriptive Solution</h5>
+                                  <div style={{ fontSize: '0.95rem', color: 'var(--text-muted)', lineHeight: '1.5', marginBottom: '2rem' }}>
+                                    {failureReports[selectedMachineReport].solution}
+                                  </div>
+                                  <button
+                                    className="btn-primary"
+                                    style={{ width: '100%', background: '#A2CB8B', borderColor: '#A2CB8B' }}
+                                    onClick={() => alert(`Initiating repair sequence for ${selectedMachineReport}...`)}
+                                  >
+                                    Authorize Technical Fix
+                                  </button>
+                                </div>
+                              </div>
+                            )}
+
+                            <div style={{ marginTop: '2.5rem', display: 'flex', justifyContent: 'flex-end', gap: '15px' }}>
+                              <button className="btn-primary" style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.1)', color: '#94a3b8' }} onClick={() => setSelectedMachineReport(null)}>Clear Report</button>
+                              <button className="btn-primary" onClick={() => alert(`Exporting Industrial Failure Audit for ${selectedMachineReport}...`)}>Export Failure Report (PDF)</button>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 5. Visualization Waveforms & AI Forecast */}
                   <div className="charts-grid" style={{ gap: '1.5rem', marginBottom: '2rem' }}>
                     <div className="premium-card" style={{ padding: '2rem' }}>
                       <h3 className="section-title"><TrendingUp size={20} color="#84B179" /> Failure Probability Waveform</h3>
@@ -2946,37 +3061,19 @@ export default function Dashboard() {
                       {userRole === 'Strategic Owner' ? (
                         <>
                           <div style={{ borderLeft: '2px solid var(--primary)', paddingLeft: '20px', marginBottom: '2.5rem' }}>
-                            <h4 style={{ color: '#fff', fontSize: '1.1rem', marginBottom: '10px' }}>Revenue Recovery Pipeline: Loom #7</h4>
+                            <h4 style={{ color: '#fff', fontSize: '1.1rem', marginBottom: '10px' }}>Revenue Recovery Pipeline: Loom fleet</h4>
                             <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', lineHeight: '1.6' }}>
-                              Strategic risk indexing identifies <span style={{ color: '#fff', fontWeight: 'bold' }}>₹1.2L</span> in at-risk output for the next 48 hours. Predictive intervention on Loom #7 spindle will secure <span style={{ color: '#A2CB8B', fontWeight: 'bold' }}>98.5%</span> of targeted quarterly EBITDA.
+                              Strategic risk indexing identifies <span style={{ color: '#fff', fontWeight: 'bold' }}>₹{strategicPdM.revenueAtRisk}</span> in at-risk outputs. PdM protocols are securing <span style={{ color: '#A2CB8B', fontWeight: 'bold' }}>98.5%</span> of targeted quarterly EBITDA gain.
                             </p>
-                          </div>
-
-                          <div style={{ background: 'rgba(99, 102, 241, 0.05)', border: '1px solid rgba(99, 102, 241, 0.1)', padding: '1rem', borderRadius: '12px', marginBottom: '2rem' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.85rem', color: 'var(--primary)', fontWeight: 'bold' }}>
-                              <CheckCircle size={16} /> Asset CAPEX Protection
-                            </div>
-                            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '5px' }}>
-                              Early servicing extends machine lifecycle by <span style={{ color: '#fff' }}>14.2 months</span>, conserving <span style={{ color: '#fff' }}>₹4.5L</span> in capital expenditure.
-                            </div>
                           </div>
                         </>
                       ) : (
                         <>
                           <div style={{ borderLeft: '2px solid var(--primary)', paddingLeft: '20px', marginBottom: '2.5rem' }}>
-                            <h4 style={{ color: '#fff', fontSize: '1.1rem', marginBottom: '10px' }}>Urgent Lubrication Required: Loom #1</h4>
+                            <h4 style={{ color: '#fff', fontSize: '1.1rem', marginBottom: '10px' }}>Critical Tech Backlog Hub</h4>
                             <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', lineHeight: '1.6' }}>
-                              Diagnostic resonance detected at <span style={{ color: '#fff', fontWeight: 'bold' }}>8.2kHz</span>. High friction on spindle drive assembly. Estimated failure window: <span style={{ color: '#f43f5e', fontWeight: 'bold' }}>36-48 Hrs</span>.
+                              Fleet health is currently baseline at <span style={{ color: '#fff', fontWeight: 'bold' }}>{advancedPdM.healthScore}%</span>. Technical swarm is focusing on high-vibration spindles to prevent immediate shift stalling.
                             </p>
-                          </div>
-
-                          <div style={{ background: 'rgba(162, 203, 139, 0.05)', border: '1px solid rgba(162, 203, 139, 0.1)', padding: '1rem', borderRadius: '12px', marginBottom: '2rem' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.85rem', color: '#A2CB8B', fontWeight: 'bold' }}>
-                              <CheckCircle size={16} /> Operational Outcome
-                            </div>
-                            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '5px' }}>
-                              Immediate intervention saves <span style={{ color: '#fff' }}>₹42,000</span> in emergency repair logistics and prevents shift stalling.
-                            </div>
                           </div>
                         </>
                       )}
@@ -2986,7 +3083,6 @@ export default function Dashboard() {
                           className="btn-primary"
                           style={{
                             flex: 1,
-                            boxShadow: '0 0 20px rgba(132, 177, 121, 0.4)',
                             background: workOrderStep === 2 ? '#A2CB8B' : 'var(--primary)',
                             borderColor: workOrderStep === 2 ? '#A2CB8B' : 'var(--primary)'
                           }}
@@ -2994,9 +3090,8 @@ export default function Dashboard() {
                             if (workOrderStep === 2) return;
                             setWorkOrderStep(1);
                             const msg = userRole === 'Strategic Owner' ? 'Approve Revenue Recovery Protocol' : 'Emergency Repair Authorization';
-                            const req = await triggerOwnerRequest('Maintenance AI', msg, `Urgent: Machine friction threshold exceeded. Requires immediate ${userRole === 'Strategic Owner' ? 'strategic servicing' : 'lubrication'}.`);
+                            const req = await triggerOwnerRequest('Maintenance AI', msg, `Urgent: Machine friction threshold exceeded.`);
                             if (req?._id) {
-                              setActiveRequestIds(p => ({ ...p, machineHealth: req._id }));
                               setMachineHealthState(1);
                               setWorkOrderStep(2);
                             }
@@ -3004,30 +3099,25 @@ export default function Dashboard() {
                         >
                           {workOrderStep === 0 ? (userRole === 'Strategic Owner' ? 'Authorize Recovery' : 'Initiate Work Order') : workOrderStep === 1 ? 'Dispatching...' : 'Approved & Logged'}
                         </button>
-                        <button
-                          className="btn-primary"
-                          style={{ background: 'transparent', border: '1px solid var(--primary)', color: 'var(--primary)', boxShadow: 'none' }}
-                          onClick={() => alert(userRole === 'Strategic Owner' ? "Downloading Financial Risk Model... (XLSX/12.4MB)" : "Downloading Neural Diagnostic Logs... (CSV/8.4MB)")}
-                        >
-                          {userRole === 'Strategic Owner' ? 'Risk Model' : 'Diagnostic Logs'}
-                        </button>
                       </div>
                     </div>
                   </div>
 
-                  {/* 5. Factory Floor Digital Twin (High-Tech Version) */}
+                  {/* 5. Shop Floor Digital Twin (Role-Aware Visualization) */}
                   <div className="premium-card" style={{ padding: '2.5rem', marginBottom: '2rem' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2.5rem' }}>
-                      <h3 className="section-title" style={{ fontSize: '1.4rem' }}><Map size={24} color="var(--primary)" /> Shop Floor Digital Twin (Edge Sync)</h3>
+                      <h3 className="section-title" style={{ fontSize: '1.4rem' }}>
+                        <Map size={24} color="var(--primary)" /> {userRole === 'Strategic Owner' ? 'Strategic Asset Value Map' : 'Shop Floor Digital Twin (Edge Sync)'}
+                      </h3>
                       <div style={{ background: 'rgba(132, 177, 121,0.05)', padding: '8px 16px', borderRadius: '10px', fontSize: '0.75rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <div className="pulse" style={{ width: '8px', height: '8px', background: 'var(--primary)', borderRadius: '50%' }}></div>
-                        15ms Edge Latency | Bhilwara Hub
+                        {userRole === 'Strategic Owner' ? 'Financial Hub Sync | Real-time ROI' : '15ms Edge Latency | Bhilwara Hub'}
                       </div>
                     </div>
 
                     <div style={{
                       height: '450px',
-                      background: 'rgba(199, 234, 187, 0.5)',
+                      background: userRole === 'Strategic Owner' ? 'rgba(99, 102, 241, 0.05)' : 'rgba(199, 234, 187, 0.2)',
                       borderRadius: '24px',
                       border: '1px solid rgba(132, 177, 121,0.08)',
                       position: 'relative',
@@ -3036,7 +3126,7 @@ export default function Dashboard() {
                       alignItems: 'center',
                       justifyContent: 'center'
                     }}>
-                      <div style={{ position: 'absolute', inset: 0, backgroundImage: 'radial-gradient(rgba(132, 177, 121,0.05) 1px, transparent 1px)', backgroundSize: '30px 30px', pointerEvents: 'none' }}></div>
+                      <div style={{ position: 'absolute', inset: 0, backgroundImage: 'radial-gradient(rgba(132, 177, 121, 0.05) 1px, transparent 1px)', backgroundSize: '30px 30px', pointerEvents: 'none' }}></div>
                       <div className="animate-scan" style={{ position: 'absolute', inset: 0, pointerEvents: 'none', background: 'linear-gradient(rgba(132, 177, 121, 0.05) 0%, transparent 100%)', opacity: 0.3 }}></div>
 
                       <div style={{
@@ -3051,41 +3141,48 @@ export default function Dashboard() {
                         {fleetData.map((m, i) => (
                           <div key={i} className="premium-card"
                             onClick={() => {
-                              if (userRole !== 'Operator') {
-                                setSelectedMachineReport(m.id === 'MOT-782' ? 'Loom #7' : m.id === 'MOT-102' ? 'Loom #1' : 'Loom #4');
-                              } else {
-                                alert("Access Restricted: Operator-level clearance cannot access financial failure audits.");
-                              }
+                              setSelectedMachineReport(m.name);
+                              // Smooth scroll to Report Hub
+                              document.querySelector('.section-title')?.scrollIntoView({ behavior: 'smooth' });
                             }}
                             style={{
-                              background: 'rgba(199, 234, 187, 0.8)',
-                              border: `1px solid ${m.color}40`,
+                              background: 'rgba(255, 255, 255, 0.02)',
+                              border: `1px solid ${m.status === 'Critical' ? '#f43f5e' : m.status === 'Warning' ? '#f59e0b' : 'var(--primary)'}40`,
                               padding: '1.2rem',
                               display: 'flex',
                               flexDirection: 'column',
                               justifyContent: 'center',
                               alignItems: 'center',
                               gap: '12px',
-                              cursor: userRole !== 'Operator' ? 'pointer' : 'default',
+                              cursor: 'pointer',
                               transform: (m.status === 'Critical') ? 'scale(1.05)' : 'none',
                               boxShadow: (m.status === 'Critical') ? `0 0 30px ${m.color}30` : 'none',
                               transition: 'all 0.3s'
                             }}>
                             <div style={{ fontSize: '0.65rem', color: m.color, fontWeight: '900', letterSpacing: '2px' }}>{m.type}</div>
-                            <div style={{ fontSize: '1.4rem', fontWeight: '900', color: '#fff' }}>{m.id}</div>
+                            <div style={{ fontSize: '1.4rem', fontWeight: '900', color: '#fff' }}>{m.name}</div>
 
                             <div style={{ position: 'relative', width: '60px', height: '60px' }}>
                               <svg width="60" height="60" viewBox="0 0 60 60">
-                                <circle cx="30" cy="30" r="25" fill="none" stroke="rgba(132, 177, 121,0.05)" strokeWidth="4" />
+                                <circle cx="30" cy="30" r="25" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="4" />
                                 <circle cx="30" cy="30" r="25" fill="none" stroke={m.color} strokeWidth="4"
                                   strokeDasharray={`${(m.score / 100) * 157}, 157`}
                                   strokeLinecap="round"
                                   transform="rotate(-90 30 30)" />
                               </svg>
-                              <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: 'bold' }}>{m.score}%</div>
+                              <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: 'bold' }}>
+                                {userRole === 'Strategic Owner' ? `${m.score}%` : `${m.score}%`}
+                              </div>
                             </div>
 
-                            <div className="badge" style={{ background: `${m.color}15`, color: m.color }}>{m.status}</div>
+                            <div className="badge" style={{ background: `${m.color}15`, color: m.color }}>
+                              {userRole === 'Strategic Owner' ? (m.status === 'Critical' ? 'At Risk' : 'Performing') : m.status}
+                            </div>
+                            {userRole === 'Strategic Owner' && (
+                              <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', textAlign: 'center' }}>
+                                Value: <span style={{ color: '#fff' }}>₹{m.score * 1200}L</span>
+                              </div>
+                            )}
                           </div>
                         ))}
                       </div>
