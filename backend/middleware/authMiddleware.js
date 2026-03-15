@@ -1,19 +1,16 @@
-const jwt = require("jsonwebtoken");
-
+/**
+ * HACKATHON DEMO MIDDLEWARE
+ * Bypassing all authentication for seamless presentation.
+ */
 const authMiddleware = (req, res, next) => {
-  const token = req.headers.authorization;
-
-  if (!token) {
-    return res.status(401).json({ message: "No token provided" });
-  }
-
-  try {
-    const decoded = jwt.verify(token.split(" ")[1], "SECRET");
-    req.user = decoded;
-    next();
-  } catch (err) {
-    return res.status(401).json({ message: "Invalid token" });
-  }
+  // Attach a dummy user object for routes that expect it
+  req.user = {
+    id: "demo_user_id",
+    role: req.headers['role'] || "Strategic Owner",
+    name: "Demo User"
+  };
+  
+  next(); // Proceed without verification
 };
 
 module.exports = authMiddleware;
