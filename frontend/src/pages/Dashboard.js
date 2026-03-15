@@ -11,13 +11,14 @@ import {
   ShieldAlert, BrainCircuit, Layers, CheckCircle, Thermometer, Globe, Building2, Database,
   MessageCircle, Video, Wand2, Smartphone, Bot,
   Box, Network, Mic, Droplet, RefreshCcw, Fingerprint, MessageSquare, ArrowRight, Landmark, BookOpen, FileScan, Sparkles, Recycle, Flame,
-  Waves, Clock, Map, Bell, History, X
+  Waves, Clock, Map, Bell, History, X, ClipboardCheck
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { agentsData } from "../data/agentsData";
 import FYPOptimizer from "./FYPOptimizer";
+import GovAssist from "./GovAssist";
 
 // --- High-Fidelity Styles ---
 const industrialStyles = `
@@ -298,7 +299,7 @@ export default function Dashboard({ defaultTab = 'overview' }) {
     // Safer selection: pick from any available machine
     const randomIndex = Math.floor(Math.random() * fleetData.length);
     const randomMachine = fleetData[randomIndex].id;
-    
+
     setPendingJobs([...pendingJobs, {
       id: newId,
       name: "New Batch Order",
@@ -632,9 +633,29 @@ export default function Dashboard({ defaultTab = 'overview' }) {
         if (isMounted) {
           setMachineStatus(mStatus.data);
           setInventoryAlerts(iAlerts.data);
-          setPendingJobs(fJobs.data.map(j => ({ id: j.jobId, name: j.jobName, priority: j.priority, color: j.color, operations: j.operations })));
-          setFleetData(fMachines.data.map(m => ({ id: m.machineId, name: m.machineName, status: m.status, color: m.color || '#3b82f6' })));
+          const formattedJobs = fJobs.data.map(j => ({ id: j.jobId, name: j.jobName, priority: j.priority, color: j.color, operations: j.operations }));
+          const formattedMachines = fMachines.data.map(m => ({ id: m.machineId, name: m.machineName, status: m.status, color: m.color || '#3b82f6' }));
+
+          setPendingJobs(formattedJobs);
+          setFleetData(formattedMachines);
           setScheduleData(fSchedule.data);
+
+          // Auto-run optimizer initially to populate KPI stats
+          if (formattedJobs.length > 0 && formattedMachines.length > 0) {
+            api.post("/ai/scheduler/optimize", {
+              jobs: formattedJobs,
+              machines: formattedMachines
+            }).then(optimizeRes => {
+              if (isMounted && optimizeRes.data && optimizeRes.data.schedule) {
+                setScheduleData(optimizeRes.data.schedule);
+                setSchedulerStats({
+                  makespan: optimizeRes.data.makespan,
+                  machineUtilization: optimizeRes.data.machineUtilization,
+                  jobCompletionTimes: optimizeRes.data.jobCompletionTimes
+                });
+              }
+            }).catch(e => console.error("Auto-optimize error:", e));
+          }
         }
 
         // Prepare standardized payloads
@@ -1318,9 +1339,9 @@ export default function Dashboard({ defaultTab = 'overview' }) {
           )}
 
           {(userRole === 'Manager' || userRole === 'Owner' || userRole === 'Strategic Owner') && (
-            <li className={`sidebar-link ${activeTab === 'fyp' ? 'active' : ''}`} 
-              onClick={() => setActiveTab('fyp')} 
-              style={{ 
+            <li className={`sidebar-link ${activeTab === 'fyp' ? 'active' : ''}`}
+              onClick={() => setActiveTab('fyp')}
+              style={{
                 color: activeTab === 'fyp' ? '#60a5fa' : '#3b82f6',
                 borderLeft: activeTab === 'fyp' ? '3px solid #3b82f6' : 'none',
                 background: activeTab === 'fyp' ? 'linear-gradient(90deg, rgba(59, 130, 246, 0.1) 0%, transparent 100%)' : 'transparent'
@@ -1354,6 +1375,12 @@ export default function Dashboard({ defaultTab = 'overview' }) {
               {lang === 'EN' ? 'Bhilwara Gov-Portal' : '  '}
             </li>
           )}
+          
+          <li className={`sidebar-link ${activeTab === 'govassist' ? 'active' : ''}`} onClick={() => { setActiveTab('govassist'); navigate('/govassist'); }} style={{ color: 'var(--accent)' }}>
+            <ClipboardCheck size={20} className={activeTab === 'govassist' ? 'pulse-slow' : ''} />
+            {lang === 'EN' ? 'GovAssist AI' : ' '}
+            {activeTab === 'govassist' && <div className="ml-auto w-1.5 h-1.5 bg-cyan-500 rounded-full shadow-[0_0_8px_#22d3ee]"></div>}
+          </li>
 
 
 
@@ -1374,10 +1401,24 @@ export default function Dashboard({ defaultTab = 'overview' }) {
               </span>
               {userRole === 'Owner' && <span className="badge" style={{ background: 'rgba(234, 179, 8, 0.1)', color: '#eab308', border: '1px solid #eab308' }}>PREMIUM ROLE</span>}
             </div>
-            <h1>{lang === 'EN' ? `Welcome, ${userRole === 'Owner' ? 'Strategic Owner' : userRole}` : `${userRole === 'Owner' ? ' ' : userRole}   `}</h1>
-            <p>{lang === 'EN' ? 'Real-time intelligence and AI-driven optimization' : '-   - '}</p>
+            <h1>
+              {activeTab === 'govassist' 
+                ? 'GovAssist AI' 
+                : (lang === 'EN' ? `Welcome, ${userRole === 'Owner' ? 'Strategic Owner' : userRole}` : `${userRole === 'Owner' ? ' ' : userRole}   `)}
+            </h1>
+            <p>
+              {activeTab === 'govassist' 
+                ? (lang === 'EN' ? 'Bhilwara Industrial Hub // Regulatory Intelligence Engine' : ' ')
+                : (lang === 'EN' ? 'Real-time intelligence and AI-driven optimization' : '-   - ')}
+            </p>
           </div>
           <div className="header-actions" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            {activeTab === 'govassist' && (
+              <div style={{ background: 'rgba(34, 211, 238, 0.1)', border: '1px solid var(--accent)', padding: '8px 16px', borderRadius: '12px', display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+                <div style={{ fontSize: '0.65rem', color: 'var(--accent)', fontWeight: 'bold' }}>GOV-SYSTEM STATUS</div>
+                <div style={{ fontSize: '0.8rem', color: 'white', fontWeight: 'bold' }}>SYNCHRONIZED</div>
+              </div>
+            )}
             <button
               className={`btn-primary ${isSimulating ? 'pulse-heavy' : ''}`}
               disabled={isSimulating}
@@ -2801,7 +2842,7 @@ export default function Dashboard({ defaultTab = 'overview' }) {
                       <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '4px' }}>Technical Backlog Depth</div>
                       <div style={{ fontSize: '2.2rem', fontWeight: '900' }}>{advancedPdM.backlogItems} <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Units</span></div>
                       <div style={{ marginTop: '15px', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                         High-latency maintenance queue items
+                        High-latency maintenance queue items
                       </div>
                     </div>
                   </>
@@ -4033,13 +4074,13 @@ export default function Dashboard({ defaultTab = 'overview' }) {
                     onClick={async () => {
                       setIsOptimizing(true);
                       setStrategicAiLogs(prev => [{ id: Date.now(), time: new Date().toLocaleTimeString(), msg: "SCHEDULER: Initiating Genetic Algorithm Optimization...", type: "system" }, ...prev]);
-                      
+
                       try {
                         const res = await api.post("/ai/scheduler/optimize", {
                           jobs: pendingJobs,
                           machines: fleetData.map(m => ({ id: m.id, name: m.name, color: m.color }))
                         });
-                        
+
                         if (res.data && res.data.schedule) {
                           setScheduleData(res.data.schedule);
                           setSchedulerStats({
@@ -4144,8 +4185,8 @@ export default function Dashboard({ defaultTab = 'overview' }) {
                           <span style={{ fontWeight: 'bold', fontSize: '0.8rem', color: job.color }}>{job.id}</span>
                           <span style={{ fontSize: '0.7rem', opacity: 0.6 }}>Priority: {job.priority}</span>
                         </div>
-                        <input 
-                          value={job.name} 
+                        <input
+                          value={job.name}
                           onChange={(e) => {
                             const newJobs = [...pendingJobs];
                             newJobs[idx].name = e.target.value;
@@ -4156,7 +4197,7 @@ export default function Dashboard({ defaultTab = 'overview' }) {
                         <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                           <span style={{ fontSize: '0.65rem', opacity: 0.5 }}>Durations:</span>
                           {job.operations.map((op, oIdx) => (
-                            <input 
+                            <input
                               key={oIdx}
                               type="number"
                               value={op.duration}
@@ -4181,8 +4222,8 @@ export default function Dashboard({ defaultTab = 'overview' }) {
                     <div style={{ background: 'rgba(0,0,0,0.2)', padding: '1rem', borderRadius: '12px' }}>
                       <div style={{ fontSize: '0.65rem', color: '#94a3b8', marginBottom: '5px' }}>BOTTLENECK ANALYSIS</div>
                       <div style={{ color: 'var(--danger)', fontWeight: 'bold', fontSize: '0.9rem' }}>
-                        {Object.entries(schedulerStats.machineUtilization).sort((a,b) => b[1]-a[1])[0]?.[0] || "Calculating..."} 
-                        <span style={{ marginLeft: '10px', fontSize: '0.7rem', opacity: 0.6 }}>@ {Object.entries(schedulerStats.machineUtilization).sort((a,b) => b[1]-a[1])[0]?.[1] || 0}% load</span>
+                        {Object.entries(schedulerStats.machineUtilization).sort((a, b) => b[1] - a[1])[0]?.[0] || "Calculating..."}
+                        <span style={{ marginLeft: '10px', fontSize: '0.7rem', opacity: 0.6 }}>@ {Object.entries(schedulerStats.machineUtilization).sort((a, b) => b[1] - a[1])[0]?.[1] || 0}% load</span>
                       </div>
                     </div>
                     <div style={{ background: 'rgba(0,0,0,0.2)', padding: '1rem', borderRadius: '12px' }}>
@@ -4232,17 +4273,17 @@ export default function Dashboard({ defaultTab = 'overview' }) {
                 </div>
               </div>
             </div>
-            
+
             <AgentGrid categories={['Core Systems']} title="Scheduling Optimization Agents" focusedAgent={focusedAgent} setFocusedAgent={setFocusedAgent} />
           </div>
         )
-      }
+        }
 
-      {activeTab === 'fyp' && (
-        <div className="fyp-panel p-4 animate-fade-in" style={{ paddingBottom: '3rem' }}>
-          <FYPOptimizer />
-        </div>
-      )}
+        {activeTab === 'fyp' && (
+          <div className="fyp-panel p-4 animate-fade-in" style={{ paddingBottom: '3rem' }}>
+            <FYPOptimizer />
+          </div>
+        )}
 
 
         {activeTab === 'agents' && (
@@ -4864,7 +4905,11 @@ export default function Dashboard({ defaultTab = 'overview' }) {
             <AgentGrid categories={['Finance']} title="Finance & Sector Analytics AI" focusedAgent={focusedAgent} setFocusedAgent={setFocusedAgent} />
           </div>
         )}
-
+        {activeTab === 'govassist' && (
+          <div className="cyber-grid" style={{ padding: '0' }}>
+            <GovAssist />
+          </div>
+        )}
       </main>
 
       {/* MSME Growth Score Modal */}
@@ -5423,6 +5468,8 @@ export default function Dashboard({ defaultTab = 'overview' }) {
           </div>
         )
       }
+
+
       {renderFailureReportModal()}
     </div>
   );
