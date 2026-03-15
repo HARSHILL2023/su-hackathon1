@@ -5,12 +5,13 @@ const User = require("../models/User");
 const nodemailer = require("nodemailer");
 require('dotenv').config();
 
-// Professional Email Transporter (Configured for Gmail SMTP)
+// Professional Email Transporter (Configured for Demo Reliability)
 const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    host: 'smtp.ethereal.email',
+    port: 587,
     auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
+        user: 'reid.schamberger@ethereal.email',
+        pass: '6m2y8Q8E2K1dGvXU37'
     }
 });
 
@@ -49,7 +50,7 @@ router.post("/login", async (req, res) => {
 
     // STEP 2: Send REAL Email (2-Step Auth)
     try {
-        await transporter.sendMail({
+        const info = await transporter.sendMail({
             from: '"SmartFactory Security" <security@smartfactory.ai>',
             to: user.email,
             subject: "🔐 Your Secure Access Token",
@@ -66,6 +67,7 @@ router.post("/login", async (req, res) => {
             `
         });
         console.log(`📧 SUCCESS: Email token dispatched to ${user.email}`);
+        console.log(`🔗 VIEW SENT EMAIL: ${nodemailer.getTestMessageUrl(info)}`);
     } catch (emailErr) {
         console.log(`⚠️ EMAIL ERROR: Failed to send to ${user.email}. Using console backup.`);
     }

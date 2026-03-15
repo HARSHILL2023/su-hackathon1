@@ -24,6 +24,7 @@ const Landing = () => {
     });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
     const [debugOtp, setDebugOtp] = useState('');
     const [activeQuestion, setActiveQuestion] = useState('');
     const [bioScan, setBioScan] = useState(false);
@@ -74,8 +75,10 @@ const Landing = () => {
                 const data = await res.json();
                 if (res.ok) {
                     setAuthMode('login');
-                    alert("Registration successful! Please login.");
+                    setError('');
+                    setSuccess("Account created successfully! Please login below.");
                 } else {
+                    setSuccess('');
                     setError(data.msg || "Registration failed");
                 }
             } else if (authMode === 'login' && step === 1) {
@@ -87,11 +90,14 @@ const Landing = () => {
                 const data = await res.json();
                 if (res.ok) {
                     setStep(2);
+                    setError('');
+                    setSuccess("Secure OTP has been dispatched to your email.");
                     if (data.hackathonToken) {
                         setDebugOtp(data.hackathonToken); // Re-using debugOtp state to show the token
                     }
                 } else {
-                    setError(data.msg || "Login failed");
+                    setSuccess('');
+                    setError(data.msg || "Access denied. Check credentials.");
                 }
             } else if (authMode === 'login' && step === 2) {
                 const res = await fetch('http://localhost:3001/api/auth/verify-otp', {
@@ -222,7 +228,12 @@ const Landing = () => {
                         position: 'relative'
                     }}>
                         <button 
-                            onClick={() => { setShowAuth(false); setStep(1); }}
+                            onClick={() => { 
+                                setShowAuth(false); 
+                                setStep(1); 
+                                setError('');
+                                setSuccess('');
+                            }}
                             style={{ position: 'absolute', top: '20px', right: '20px', background: 'none', border: 'none', color: 'white', opacity: 0.5, cursor: 'pointer' }}
                         >✕</button>
 
@@ -244,6 +255,12 @@ const Landing = () => {
                         {error && (
                             <div style={{ padding: '12px', background: 'rgba(244, 63, 94, 0.1)', border: '1px solid rgba(244, 63, 94, 0.2)', color: '#f43f5e', borderRadius: '12px', fontSize: '0.9rem', marginBottom: '1.5rem', textAlign: 'center' }}>
                                 {error}
+                            </div>
+                        )}
+
+                        {success && (
+                            <div style={{ padding: '12px', background: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.2)', color: '#10b981', borderRadius: '12px', fontSize: '0.9rem', marginBottom: '1.5rem', textAlign: 'center' }}>
+                                {success}
                             </div>
                         )}
 
@@ -431,7 +448,11 @@ const Landing = () => {
                             <div style={{ textAlign: 'center', marginTop: '2rem', fontSize: '0.9rem', color: 'rgba(255,255,255,0.5)' }}>
                                 {authMode === 'login' ? "New operative?" : "Already verified?"} 
                                 <button 
-                                    onClick={() => setAuthMode(authMode === 'login' ? 'register' : 'login')}
+                                    onClick={() => {
+                                        setAuthMode(authMode === 'login' ? 'register' : 'login');
+                                        setError('');
+                                        setSuccess('');
+                                    }}
                                     style={{ background: 'none', border: 'none', color: '#6366f1', fontWeight: '700', marginLeft: '8px', cursor: 'pointer' }}
                                 >
                                     {authMode === 'login' ? 'Initiate Registration' : 'Return to Login'}
